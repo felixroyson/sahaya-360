@@ -20,6 +20,7 @@ export const AppProvider = ({ children }) => {
       // Ignore storage errors in private browsing
     }
   };
+  const [activeRole, setActiveRole] = useState('landing');
   const [cases, setCases] = useState(MOCK_CASES);
   const [selectedCaseId, setSelectedCaseId] = useState(MOCK_CASES[0].id);
   const [districts, setDistricts] = useState(MOCK_DISTRICTS_DATA);
