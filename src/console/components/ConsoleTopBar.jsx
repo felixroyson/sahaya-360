@@ -1,0 +1,136 @@
+import React from 'react';
+import { 
+  Search, 
+  Bell, 
+  Globe, 
+  ArrowLeft, 
+  ShieldAlert, 
+  PlayCircle, 
+  CheckCircle2,
+  Sparkles
+} from 'lucide-react';
+
+export const ConsoleTopBar = ({ 
+  searchQuery, 
+  setSearchQuery, 
+  activeRole, 
+  setActiveRole, 
+  language, 
+  setLanguage, 
+  unresolvedAlertsCount,
+  onOpenAlerts,
+  onLaunchDemo,
+  isDemoActive,
+  onReturnToLanding
+}) => {
+  const handleBack = () => {
+    if (onReturnToLanding) {
+      onReturnToLanding();
+    }
+    setActiveRole('landing');
+  };
+
+  return (
+    <header className="console-topbar">
+      {/* Official Government Credentials */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingRight: '12px', borderRight: '1px solid #E2E8F0' }}>
+        <img 
+          src="/ashoka_emblem.png" 
+          alt="State Emblem of India" 
+          style={{ height: '32px', width: 'auto', objectFit: 'contain', display: 'block' }} 
+        />
+        <div style={{ lineHeight: 1.15 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <img 
+              src="/indian_flag.png" 
+              alt="National Flag of India" 
+              style={{ width: '14px', height: '9px', objectFit: 'cover', borderRadius: '1px' }} 
+            />
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0F172A' }}>Govt of India</span>
+          </div>
+          <div style={{ fontSize: '0.6rem', color: '#64748B' }}>MoSJE Official Desk</div>
+        </div>
+      </div>
+
+      {/* Top Left: Global Search */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1', maxWidth: '440px' }}>
+        {/* Global Search */}
+        <div className="console-search-box" style={{ flex: 1, width: 'auto' }}>
+          <Search size={16} className="console-search-icon" />
+          <input 
+            type="text" 
+            placeholder="Global search by Case ID (#894), citizen, FIR, district..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Top Bar Actions */}
+      <div className="console-topbar-actions">
+        {/* Interactive Demo Scenario Trigger */}
+        <button 
+          className="console-demo-btn"
+          onClick={onLaunchDemo}
+          title="Run Live End-to-End Walkthrough (Distress Signal → Review → Intervention → Delivery)"
+        >
+          <PlayCircle size={15} />
+          <span>{isDemoActive ? "Demo: Case NHAA-DEMO-001 (Active)" : "Demo Scenario: NHAA-DEMO-001"}</span>
+        </button>
+
+        {/* Role Switcher */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ fontSize: '0.74rem', color: '#667085', fontWeight: 600 }}>Role:</span>
+          <select 
+            className="console-role-select"
+            value={activeRole}
+            onChange={(e) => setActiveRole(e.target.value)}
+          >
+            <option value="counsellor">Clinical Counsellor (Dr. Ananya)</option>
+            <option value="district">District Officer (DM / SP)</option>
+            <option value="national">National MoSJE Grid</option>
+            <option value="victim">Citizen Portal (Protected)</option>
+          </select>
+        </div>
+
+        {/* Language Selector */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Globe size={15} style={{ color: '#667085' }} />
+          <select 
+            className="console-role-select"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
+            <option value="en">English (EN)</option>
+            <option value="hi">हिंदी (HI)</option>
+            <option value="ta">தமிழ் (TA)</option>
+            <option value="te">తెలుగు (TE)</option>
+            <option value="mr">मराठी (MR)</option>
+          </select>
+        </div>
+
+        {/* Notifications Icon with Badge */}
+        <button 
+          className="console-icon-btn" 
+          onClick={onOpenAlerts}
+          title="View Active Critical Alerts"
+        >
+          <Bell size={18} />
+          {unresolvedAlertsCount > 0 && (
+            <span className="console-icon-badge">{unresolvedAlertsCount}</span>
+          )}
+        </button>
+
+        {/* Back to Home / Public Portal Button */}
+        <button 
+          className="console-return-link"
+          onClick={handleBack}
+          title="Return to Public Landing Page (Home)"
+        >
+          <ArrowLeft size={14} />
+          <span>Home</span>
+        </button>
+      </div>
+    </header>
+  );
+};
