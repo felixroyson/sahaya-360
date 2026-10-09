@@ -41,33 +41,32 @@ export const ConsoleTopBar = ({
   return (
     <header className="console-topbar">
       {/* Official Government Credentials */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingRight: '12px', borderRight: '1px solid #E2E8F0' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingRight: '14px', borderRight: '1px solid #E2E8F0', flexShrink: 0 }}>
         <img 
           src="/ashoka_emblem.png" 
           alt="State Emblem of India" 
           style={{ height: '32px', width: 'auto', objectFit: 'contain', display: 'block' }} 
         />
-        <div style={{ lineHeight: 1.15 }}>
+        <div style={{ lineHeight: 1.2 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <img 
               src="/indian_flag.png" 
               alt="National Flag of India" 
-              style={{ width: '14px', height: '9px', objectFit: 'cover', borderRadius: '1px' }} 
+              style={{ width: '13px', height: '9px', objectFit: 'cover', borderRadius: '1px' }} 
             />
-            <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#0F172A' }}>Govt of India</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#0F172A', letterSpacing: '0.01em' }}>Government of India</span>
           </div>
-          <div style={{ fontSize: '0.6rem', color: '#64748B' }}>MoSJE Official Desk</div>
+          <div style={{ fontSize: '0.62rem', color: '#64748B', fontWeight: 600 }}>MoSJE Official Desk</div>
         </div>
       </div>
 
       {/* Top Left: Global Search */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1', maxWidth: '440px' }}>
-        {/* Global Search */}
-        <div className="console-search-box" style={{ flex: 1, width: 'auto' }}>
-          <Search size={16} className="console-search-icon" />
+      <div style={{ display: 'flex', alignItems: 'center', flex: '1', minWidth: '180px', maxWidth: '340px' }}>
+        <div className="console-search-box" style={{ width: '100%' }}>
+          <Search size={15} className="console-search-icon" />
           <input 
             type="text" 
-            placeholder="Global search by Case ID (#894), citizen, FIR, district..."
+            placeholder="Search citizen, FIR, district..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -76,14 +75,28 @@ export const ConsoleTopBar = ({
 
       {/* Top Bar Actions */}
       <div className="console-topbar-actions">
-        {/* Interactive Demo Scenario Trigger */}
+        {/* Interactive Guided Tour Trigger */}
         <button 
-          className="console-demo-btn"
+          type="button"
           onClick={onLaunchDemo}
-          title="Run Live End-to-End Walkthrough (Distress Signal → Review → Intervention → Delivery)"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '6px 12px',
+            borderRadius: '20px',
+            border: isDemoActive ? '1px solid #0284c7' : '1px solid #e2e8f0',
+            background: isDemoActive ? '#e0f2fe' : '#ffffff',
+            color: isDemoActive ? '#0369a1' : '#475569',
+            fontSize: '0.74rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.15s ease'
+          }}
+          title="Toggle Guided Interactive Tour"
         >
-          <PlayCircle size={15} />
-          <span>{isDemoActive ? "Demo: Case NHAA-DEMO-001 (Active)" : "Demo Scenario: NHAA-DEMO-001"}</span>
+          <Sparkles size={13} color={isDemoActive ? '#0284c7' : '#64748b'} />
+          <span>{isDemoActive ? "Guided Tour: On" : "Guided Tour"}</span>
         </button>
 
         {/* Role Switcher */}

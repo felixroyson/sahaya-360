@@ -49,6 +49,13 @@ export const ConsoleApp = ({
     }
   };
   const [searchQuery, setSearchQuery] = useState('');
+  const handleSearchChange = (query) => {
+    setSearchQuery(query);
+    if (query.trim().length > 0 && activeNav !== 'triage' && activeNav !== 'cases') {
+      setActiveNav('triage');
+      setIsViewingCaseDetail(false);
+    }
+  };
 
   // Cases State
   const [cases, setCases] = useState(SYNTHETIC_CASES);
@@ -63,7 +70,7 @@ export const ConsoleApp = ({
   const [explainCaseData, setExplainCaseData] = useState(null);
 
   // Interactive Demo Scenario State
-  const [isDemoActive, setIsDemoActive] = useState(true);
+  const [isDemoActive, setIsDemoActive] = useState(false);
   const [demoStep, setDemoStep] = useState(1);
   const [isDemoExpanded, setIsDemoExpanded] = useState(false);
 
@@ -272,7 +279,7 @@ export const ConsoleApp = ({
         {/* Top Bar */}
         <ConsoleTopBar 
           searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
+          setSearchQuery={handleSearchChange}
           activeRole={activeRole}
           setActiveRole={handleRoleChange}
           language={language}
@@ -282,7 +289,7 @@ export const ConsoleApp = ({
             setActiveNav('alerts');
             setIsViewingCaseDetail(false);
           }}
-          onLaunchDemo={() => setIsDemoExpanded(!isDemoExpanded)}
+          onLaunchDemo={() => setIsDemoActive(prev => !prev)}
           isDemoActive={isDemoActive}
           onReturnToLanding={handleReturnToLanding}
           currentUser={currentUser}
@@ -299,6 +306,7 @@ export const ConsoleApp = ({
               onJumpToStep={handleJumpToStep}
               isExpanded={isDemoExpanded}
               setIsExpanded={setIsDemoExpanded}
+              onClose={() => setIsDemoActive(false)}
             />
           </div>
         )}
@@ -360,6 +368,7 @@ export const ConsoleApp = ({
                 cases={cases}
                 onSelectCase={handleSelectCase}
                 onOpenExplain={handleOpenExplain}
+                initialSearch={searchQuery}
               />
             )}
 
@@ -368,6 +377,7 @@ export const ConsoleApp = ({
                 cases={cases}
                 onSelectCase={handleSelectCase}
                 onOpenExplain={handleOpenExplain}
+                initialSearch={searchQuery}
               />
             )}
 

@@ -74,13 +74,13 @@ export const ConsoleCaseDetail = ({
             </div>
 
             <div style={{ fontSize: '1.05rem', fontWeight: 600, color: '#344054' }}>
-              {caseData.citizenName}
+              {caseData.citizenName || caseData.victimName}
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '0.82rem', color: '#667085', marginTop: '6px', flexWrap: 'wrap' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <MapPin size={14} />
-                <span>{caseData.location}</span>
+                <span>{caseData.location || `${caseData.district}, ${caseData.state}`}</span>
               </span>
               <span>•</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -111,7 +111,7 @@ export const ConsoleCaseDetail = ({
                 Distress Signal (DDS)
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 800, color: isCritical ? '#B42318' : '#D97706', marginTop: '2px' }}>
-                {caseData.currentScore} <span style={{ fontSize: '0.7rem', color: '#98A2B3' }}>/ 100</span>
+                {caseData.currentScore || caseData.dynamicDistressScore || 84} <span style={{ fontSize: '0.7rem', color: '#98A2B3' }}>/ 100</span>
               </div>
             </div>
 
@@ -120,7 +120,7 @@ export const ConsoleCaseDetail = ({
                 Personal Baseline
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#172033', marginTop: '2px' }}>
-                {caseData.baselineScore}
+                {caseData.baselineScore || caseData.personalBaselineDistress || 28}
               </div>
             </div>
 
@@ -129,7 +129,7 @@ export const ConsoleCaseDetail = ({
                 Deviation
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#B42318', marginTop: '2px' }}>
-                {caseData.deviation}
+                {caseData.deviation || (caseData.baselineDelta ? `+${caseData.baselineDelta}` : '+56')}
               </div>
             </div>
 
@@ -138,7 +138,7 @@ export const ConsoleCaseDetail = ({
                 Signal Confidence
               </div>
               <div style={{ fontSize: '1.45rem', fontWeight: 800, color: '#2563EB', marginTop: '2px' }}>
-                {caseData.confidence}%
+                {caseData.confidence || 87}%
               </div>
             </div>
           </div>

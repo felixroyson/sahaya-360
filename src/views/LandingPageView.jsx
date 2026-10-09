@@ -782,29 +782,6 @@ export const LandingPageView = () => {
                   <Shield size={14} />
                   <span>{currentUser.role === 'citizen' ? 'Citizen Portal' : 'Official Console'}</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={logout}
-                  style={{
-                    background: '#fee2e2',
-                    color: '#b91c1c',
-                    border: '1px solid #fecaca',
-                    borderRadius: '9999px',
-                    padding: '8px 14px',
-                    fontSize: '0.80rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    transition: 'all 0.15s ease',
-                    whiteSpace: 'nowrap'
-                  }}
-                  title="Log out of authenticated session"
-                >
-                  <LogOut size={13} />
-                  <span>Logout</span>
-                </button>
               </div>
             ) : (
               <button

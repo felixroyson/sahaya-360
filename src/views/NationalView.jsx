@@ -44,10 +44,10 @@ export const NationalView = () => {
             </span>
           </div>
           <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
-            National Atrocity Victim Mental Health & Distress Intelligence
+            National Distress Intelligence & Monitoring Grid
           </h2>
           <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>
-            Longitudinal surveillance across 36 States/UTs under SC/ST (Prevention of Atrocities) Act, 1989 & NHAA 14566
+            Nationwide monitoring across all States & Union Territories with real-time helpline 14566 integration.
           </p>
         </div>
 

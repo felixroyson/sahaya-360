@@ -75,7 +75,7 @@ export const ActionDispatchModal = () => {
       title: chosen.title,
       authority: targetOfficial,
       priority,
-      notes: notes || `Automated dispatch initiated via SAMVEDNA AI for Case #${caseData.id}`
+      notes: notes || `Automated dispatch initiated via SAHAYA-360 for Case #${caseData.caseNumber || caseData.id}`
     });
   };
 
@@ -95,11 +95,11 @@ export const ActionDispatchModal = () => {
                   Prescriptive Intervention Dispatch
                 </h2>
                 <span className="badge badge-critical" style={{ fontSize: '0.68rem' }}>
-                  Risk Score: {caseData.dynamicDistressScore}/100
+                  Risk Score: {caseData.dynamicDistressScore || caseData.currentScore || 84}/100
                 </span>
               </div>
               <p style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
-                Target Case: <strong style={{ color: '#0f172a' }}>{caseData.victimName}</strong> | {caseData.district}, {caseData.state}
+                Target Case: <strong style={{ color: '#0f172a' }}>{caseData.victimName || caseData.citizenName || 'Protected Citizen'}</strong> | {caseData.district}, {caseData.state || caseData.location || 'Uttar Pradesh'}
               </p>
             </div>
           </div>

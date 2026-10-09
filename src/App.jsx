@@ -18,7 +18,7 @@ export const App = () => {
 
   return (
     <>
-      <GovUtilityTopBar />
+      {showLanding && <GovUtilityTopBar />}
       {showLanding ? (
         <LandingPageView />
       ) : (
@@ -33,7 +33,7 @@ export const App = () => {
       <SOSPanicOverlay />
       <SIHPresentationModal />
       <DiscreetCamouflageOverlay />
-      {!showLanding && <FloatingAIChatbot />}
+      {(showLanding || activeRole === 'victim') && <FloatingAIChatbot />}
     </>
   );
 };

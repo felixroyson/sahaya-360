@@ -9,69 +9,70 @@ import {
   UserCheck, 
   Sparkles,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  X
 } from 'lucide-react';
 
 export const DEMO_STEPS = [
   {
     step: 1,
-    title: "1. Check-in Received",
-    desc: "IVRS 14566 morning pulse received with severe acoustic tremor & voice distress transcript.",
+    title: "1. Distress Call Received",
+    desc: "Citizen completed morning helpline check-in. Severe voice stress and fear detected.",
     action: "Simulate Distress Check-in"
   },
   {
     step: 2,
-    title: "2. Signal Detected",
-    desc: "NLP + Acoustic model computes Dynamic Distress Signal (DDS: 84 / 100).",
+    title: "2. High Risk Calculated",
+    desc: "AI calculates Distress Score of 84 / 100 (Severe Risk Category).",
     action: "Evaluate Signal"
   },
   {
     step: 3,
-    title: "3. Baseline Delta Calculated",
-    desc: "Comparison with victim's personal baseline (28) flags acute +56 point deviation.",
-    action: "Calculate Baseline Delta"
+    title: "3. Abnormal Increase Flagged",
+    desc: "Score is +56 points higher than citizen's baseline (usual score: 28).",
+    action: "Calculate Deviation"
   },
   {
     step: 4,
-    title: "4. Explainable Alert Generated",
-    desc: "Factor attribution created: Imminent trial proximity (+18), threat (+16), hesitation (+11).",
+    title: "4. Danger Factors Identified",
+    desc: "Upcoming court trial in 9 days and reported intimidation flagged as main reasons.",
     action: "Generate Alert"
   },
   {
     step: 5,
-    title: "5. Counsellor Reviews Explanation",
-    desc: "Clinical Counsellor (Dr. Ananya) inspects SHAP/LIME factors and acoustic markers.",
-    action: "Review Explanation"
+    title: "5. Doctor Reviews Case",
+    desc: "Clinical Counsellor reviews AI findings and listens to audio stress markers.",
+    action: "Review Findings"
   },
   {
     step: 6,
-    title: "6. Concern Confirmed",
-    desc: "Counsellor signs clinical verification: 'AI Supports — Humans Decide'.",
+    title: "6. Doctor Confirms Risk",
+    desc: "Doctor verifies emergency: 'AI assists — human expert approves.'",
     action: "Confirm Risk"
   },
   {
     step: 7,
-    title: "7. Protection Dispatched",
-    desc: "Statutory order generated for Armed Police Escort under Witness Protection Scheme 2018.",
+    title: "7. Police Escort Dispatched",
+    desc: "Magistrate issues statutory order for 24×7 armed police protection.",
     action: "Deploy Protection"
   },
   {
     step: 8,
-    title: "8. Counselling Deployed",
-    desc: "Emergency tele-counselling trauma stabilization session assigned to Dr. Meena.",
-    action: "Deploy Counselling"
+    title: "8. Counseling Scheduled",
+    desc: "Doctor connects directly with citizen to stabilize trauma and anxiety.",
+    action: "Start Counseling"
   },
   {
     step: 9,
-    title: "9. Delivery Verified",
-    desc: "DSP Sasni Gate & Clinician upload delivery receipts; Closed-Loop status updated.",
-    action: "Verify Delivery"
+    title: "9. Protection Verified",
+    desc: "Local police station confirms armed escort is stationed at citizen's home.",
+    action: "Verify Protection"
   },
   {
     step: 10,
-    title: "10. Baseline Normalization",
-    desc: "Follow-up check-in received: Victim feels secure. DDS normalizes from 84 down to 32.",
-    action: "Follow-up & Resolve"
+    title: "10. Citizen Safe & Normalized",
+    desc: "Follow-up check-in: Citizen feels secure. Distress score drops from 84 down to 32.",
+    action: "Resolve Case"
   }
 ];
 
@@ -81,7 +82,8 @@ export const InteractiveDemoBanner = ({
   onResetDemo, 
   onJumpToStep,
   isExpanded,
-  setIsExpanded 
+  setIsExpanded,
+  onClose
 }) => {
   const currentStepData = DEMO_STEPS[currentStep - 1] || DEMO_STEPS[0];
   const isCompleted = currentStep >= 10;
@@ -91,7 +93,7 @@ export const InteractiveDemoBanner = ({
       <div style={{ flex: 1, minWidth: '280px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
           <span style={{ 
-            background: isCompleted ? '#15803D' : '#DC2626', 
+            background: isCompleted ? '#15803D' : '#0284C7', 
             color: '#FFFFFF', 
             fontSize: '0.68rem', 
             fontWeight: 800, 
@@ -102,7 +104,7 @@ export const InteractiveDemoBanner = ({
             gap: '4px'
           }}>
             <Sparkles size={11} />
-            <span>SIH 2026 INTERACTIVE WALKTHROUGH</span>
+            <span>GUIDED WORKFLOW TOUR</span>
           </span>
           <span style={{ fontSize: '0.74rem', color: '#94A3B8' }}>
             Case NHAA-DEMO-001 (Ramesh Kumar, Aligarh)
@@ -177,12 +179,36 @@ export const InteractiveDemoBanner = ({
             border: 'none',
             color: '#94A3B8',
             cursor: 'pointer',
-            padding: '4px'
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center'
           }}
           title={isExpanded ? "Collapse steps" : "Expand all 10 steps"}
         >
           {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
         </button>
+
+        {onClose && (
+          <button
+            onClick={onClose}
+            style={{
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: 'none',
+              color: '#CBD5E1',
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              marginLeft: '4px'
+            }}
+            title="Dismiss Tour"
+          >
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       {/* Expanded 10-step progress bar */}

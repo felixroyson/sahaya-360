@@ -369,9 +369,11 @@ export const ProtectedCitizenPortal = ({
       fontSize: `${fontSizeScale * 100}%`
     }}>
       
-      {/* 1. TOP UTILITY STRIP (Handled globally by GovUtilityTopBar in App.jsx) */}
+      {/* 1. TOP UTILITY STRIP */}
       <div style={{
-        display: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         background: '#0B1A30',
         color: '#CBD5E1',
         fontSize: '0.72rem',

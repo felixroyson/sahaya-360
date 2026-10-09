@@ -50,15 +50,15 @@ export const DistrictView = () => {
       <div className="glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', padding: '1.25rem 1.75rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '4px' }}>
-            <span className="badge badge-poa">District Command Desk</span>
+            <span className="badge badge-poa">District Vigilance Desk</span>
             <span style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>•</span>
-            <span style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>District Collector & SP Joint Vigilance Cell</span>
+            <span style={{ fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>Aligarh District Magistrate & SP Command</span>
           </div>
           <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>
-            High-Risk Victim Triage & Automated Case Prioritization
+            Citizen Safety & Distress Monitoring Desk
           </h2>
           <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '2px' }}>
-            Continuous psychological distress surveillance and statutory mandate tracking under SC/ST PoA Act 1989
+            Review high-risk distress signals, verify warning signs, and issue immediate police protection or relief.
           </p>
         </div>
 
@@ -67,18 +67,20 @@ export const DistrictView = () => {
             className="btn btn-outline-ashoka"
             onClick={() => openXAI(selectedCase)}
             style={{ fontSize: '0.82rem', gap: '6px' }}
+            title="Inspect AI reasoning and contributing factors"
           >
             <Sparkles size={15} />
-            <span>Explain AI Score (SHAP)</span>
+            <span>Why was this flagged? (AI Explainer)</span>
           </button>
 
           <button 
             className="btn btn-primary"
             onClick={() => openDispatch(selectedCase)}
             style={{ fontSize: '0.82rem', gap: '6px' }}
+            title="Dispatch police protection order or relief compensation"
           >
             <Send size={15} />
-            <span>Dispatch Statutory Action</span>
+            <span>⚡ Take Action (Protection / Relief)</span>
           </button>
         </div>
       </div>
@@ -94,17 +96,17 @@ export const DistrictView = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
               <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <ShieldAlert size={17} color="#dc2626" />
-                <span>Priority Triage Queue ({filteredCases.length})</span>
+                <span>Priority Cases ({filteredCases.length})</span>
               </h3>
-              <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>Auto-Sorted by DDS</span>
+              <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>Sorted by Risk</span>
             </div>
 
             {/* Quick Search */}
             <div style={{ position: 'relative', marginBottom: '0.85rem' }}>
               <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
               <input 
-                type="text"
-                placeholder="Search victim name, district..."
+                type="text" 
+                placeholder="Search citizen name, district, FIR..."
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 style={{ width: '100%', paddingLeft: '32px', fontSize: '0.8rem' }}
@@ -140,17 +142,17 @@ export const DistrictView = () => {
                         className={`badge ${isCritical ? 'badge-critical' : isHigh ? 'badge-high' : 'badge-low'}`}
                         style={{ fontSize: '0.7rem', padding: '2px 7px' }}
                       >
-                        DDS: {c.dynamicDistressScore}
+                        {isCritical ? `Severe (${c.dynamicDistressScore}/100)` : isHigh ? `High (${c.dynamicDistressScore}/100)` : `Moderate (${c.dynamicDistressScore}/100)`}
                       </span>
                     </div>
 
                     <div style={{ fontSize: '0.72rem', color: '#64748b', marginBottom: '5px' }}>
-                      {c.caseType} • {c.district}, {c.state}
+                      {c.caseType} • {c.district}
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', marginBottom: '5px' }}>
                       <span style={{ color: '#ea580c', fontWeight: 700 }}>
-                        Trial: {c.nextCourtDate.split(' ')[0]}
+                        📅 Trial: {c.nextCourtDate.split(' ')[0]}
                       </span>
                       <span style={{ 
                         color: c.baselineDelta > 30 ? '#dc2626' : '#d97706',
@@ -160,7 +162,7 @@ export const DistrictView = () => {
                         borderRadius: '4px',
                         fontSize: '0.68rem'
                       }}>
-                        Δ +{c.baselineDelta || 0} pts (Base: {c.personalBaselineDistress || 28})
+                        +{c.baselineDelta || 0} pts above baseline
                       </span>
                     </div>
 
@@ -225,7 +227,9 @@ export const DistrictView = () => {
                     {selectedCase.victimName}
                   </h3>
                   <span className="badge badge-poa">{selectedCase.priorityCategory}</span>
-                  <span className="badge badge-critical">DDS: {selectedCase.dynamicDistressScore}/100</span>
+                  <span className={`badge ${selectedCase.dynamicDistressScore >= 80 ? 'badge-critical' : 'badge-high'}`}>
+                    Distress Level: {selectedCase.dynamicDistressScore}/100
+                  </span>
                 </div>
                 <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '4px' }}>
                   Case ID: <strong style={{ color: '#0f172a' }}>{selectedCase.id}</strong> | FIR: <strong style={{ color: '#0f172a' }}>{selectedCase.firNumber}</strong> | Registered: {selectedCase.registrationDate}
@@ -244,14 +248,14 @@ export const DistrictView = () => {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
               }}>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>Dynamic Distress Score</div>
+                  <div style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600 }}>Distress Score</div>
                   <div style={{
                     fontSize: '1.75rem',
                     fontWeight: 900,
                     color: selectedCase.dynamicDistressScore >= 80 ? '#dc2626' : selectedCase.dynamicDistressScore >= 65 ? '#ea580c' : '#16a34a',
                     fontFamily: 'var(--font-mono)'
                   }}>
-                    {selectedCase.dynamicDistressScore}
+                    {selectedCase.dynamicDistressScore}<span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>/100</span>
                   </div>
                 </div>
                 <div style={{ height: '36px', width: '1px', background: '#e2e8f0' }} />
@@ -262,25 +266,57 @@ export const DistrictView = () => {
               </div>
             </div>
 
+            {/* Plain-English Case Summary for Instant Comprehension */}
+            <div style={{
+              background: '#f0f9ff',
+              border: '1px solid #bae6fd',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              marginBottom: '1.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontWeight: 800, color: '#0284c7', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <Info size={14} />
+                <span>Quick Situation Brief (Plain English)</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '14px', fontSize: '0.82rem' }}>
+                <div>
+                  <strong style={{ color: '#0f172a' }}>What happened?</strong>
+                  <p style={{ margin: '2px 0 0', color: '#334155', lineHeight: 1.45 }}>
+                    Citizen reported fear & intimidation before upcoming trial date. Severe acoustic tremors and anxiety were detected in morning helpline call.
+                  </p>
+                </div>
+                <div>
+                  <strong style={{ color: '#166534' }}>Recommended Action:</strong>
+                  <p style={{ margin: '2px 0 0', color: '#15803d', lineHeight: 1.45 }}>
+                    1. Assign 24×7 armed police escort under Section 15A.<br/>
+                    2. Expedite 50% interim relief fund via Direct Benefit Transfer.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Quick Status Badges */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.85rem', marginBottom: '1.25rem', fontSize: '0.78rem' }}>
               <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <div style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>Current Judicial Stage</div>
+                <div style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>Legal Stage</div>
                 <div style={{ color: '#0f172a', fontWeight: 700, marginTop: '2px' }}>{selectedCase.currentStage}</div>
               </div>
 
               <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <div style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>Next Hearing Date</div>
+                <div style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>Next Court Date</div>
                 <div style={{ color: '#ea580c', fontWeight: 800, marginTop: '2px' }}>{selectedCase.nextCourtDate}</div>
               </div>
 
               <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <div style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>Police Protection Status</div>
+                <div style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>Police Protection</div>
                 <div style={{ color: '#0284c7', fontWeight: 700, marginTop: '2px' }}>{selectedCase.policeProtectionStatus}</div>
               </div>
 
               <div style={{ background: '#f8fafc', padding: '0.75rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <div style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>PoA Statutory Relief</div>
+                <div style={{ color: '#64748b', fontSize: '0.7rem', fontWeight: 600 }}>Interim Relief Sanctioned</div>
                 <div style={{ color: '#16a34a', fontWeight: 800, marginTop: '2px' }}>{selectedCase.compensationDisbursed}</div>
               </div>
             </div>
@@ -291,19 +327,19 @@ export const DistrictView = () => {
                 className={`tab-pill ${activeTab === 'overview' ? 'active' : ''}`}
                 onClick={() => setActiveTab('overview')}
               >
-                Distress Forecasting & Trends
+                Distress Trend & Timeline
               </button>
               <button 
                 className={`tab-pill ${activeTab === 'voice_stress' ? 'active' : ''}`}
                 onClick={() => setActiveTab('voice_stress')}
               >
-                Voice Stress & Acoustic Analysis
+                Voice Stress & Audio Call
               </button>
               <button 
                 className={`tab-pill ${activeTab === 'interventions' ? 'active' : ''}`}
                 onClick={() => setActiveTab('interventions')}
               >
-                Statutory Interventions ({selectedCase.recommendedInterventions?.length || 0})
+                Protection Orders & Actions ({selectedCase.recommendedInterventions?.length || 0})
               </button>
             </div>
 

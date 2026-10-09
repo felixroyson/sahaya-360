@@ -63,7 +63,7 @@ export const CounsellorView = () => {
             <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>MoSJE Empanelled Psychological Network • SAHAYA-360</span>
           </div>
           <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0f172a' }}>
-            Victim Psychiatric Dossier & Human-in-the-Loop Clinical Console
+            Citizen Mental Health & Clinical Counseling Desk
           </h2>
         </div>
 
@@ -72,9 +72,10 @@ export const CounsellorView = () => {
             className="btn btn-outline-ashoka"
             onClick={() => openXAI(selectedCase)}
             style={{ fontSize: '0.8rem', gap: '6px' }}
+            title="Inspect AI reasoning and contributing factors"
           >
             <Sparkles size={15} />
-            <span>Explain AI Factors (SHAP)</span>
+            <span>Why was this flagged? (AI Explainer)</span>
           </button>
 
           <button 

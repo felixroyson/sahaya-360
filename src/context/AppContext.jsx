@@ -239,14 +239,20 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // If user presses Escape key, toggle discreet camouflage immediately
-      if (e.key === 'Escape' && !isPitchDeckOpen) {
-        setIsDiscreetCamouflage(prev => !prev);
+      if (e.key === 'Escape') {
+        if (isDiscreetCamouflage) {
+          setIsDiscreetCamouflage(false);
+          return;
+        }
+        // Only trigger panic camouflage for citizen role, not in official desks
+        if (activeRole === 'victim' && !isPitchDeckOpen && !modalState.isOpen) {
+          setIsDiscreetCamouflage(true);
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isPitchDeckOpen]);
+  }, [isPitchDeckOpen, activeRole, isDiscreetCamouflage, modalState.isOpen]);
 
   // Active alerts stream
   const [alerts, setAlerts] = useState([

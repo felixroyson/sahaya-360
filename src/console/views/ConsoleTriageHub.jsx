@@ -16,11 +16,18 @@ import {
 export const ConsoleTriageHub = ({ 
   cases, 
   onSelectCase, 
-  onOpenExplain 
+  onOpenExplain,
+  initialSearch = ''
 }) => {
   const [filterSeverity, setFilterSeverity] = useState('ALL'); // 'ALL' | 'CRITICAL' | 'HIGH' | 'MODERATE' | 'MONITORING'
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [stateFilter, setStateFilter] = useState('ALL');
+
+  React.useEffect(() => {
+    if (initialSearch !== undefined) {
+      setSearchQuery(initialSearch);
+    }
+  }, [initialSearch]);
 
   // Filter cases
   const filteredCases = cases.filter(c => {

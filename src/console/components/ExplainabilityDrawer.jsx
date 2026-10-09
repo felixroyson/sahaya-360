@@ -59,7 +59,7 @@ export const ExplainabilityDrawer = ({
               WHY WAS THIS CASE FLAGGED?
             </h2>
             <div style={{ fontSize: '0.8rem', color: '#667085', marginTop: '2px' }}>
-              Case #{caseData.caseNumber || caseData.id} • {caseData.citizenName || 'Protected Citizen'}
+              Case #{caseData.caseNumber || caseData.id} • {caseData.citizenName || caseData.victimName || 'Protected Citizen'}
             </div>
           </div>
           <button className="console-icon-btn" onClick={onClose}>
@@ -86,7 +86,7 @@ export const ExplainabilityDrawer = ({
                 Current Signal
               </div>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#B42318', marginTop: '4px' }}>
-                {caseData.currentScore || 84} <span style={{ fontSize: '0.9rem', color: '#98A2B3' }}>/ 100</span>
+                {caseData.currentScore || caseData.dynamicDistressScore || 84} <span style={{ fontSize: '0.9rem', color: '#98A2B3' }}>/ 100</span>
               </div>
               <div style={{ fontSize: '0.72rem', color: '#B42318', fontWeight: 600 }}>Potential Acute Distress</div>
             </div>
@@ -96,7 +96,7 @@ export const ExplainabilityDrawer = ({
                 Personal Baseline
               </div>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#172033', marginTop: '4px' }}>
-                {caseData.baselineScore || 28}
+                {caseData.baselineScore || caseData.personalBaselineDistress || 28}
               </div>
               <div style={{ fontSize: '0.72rem', color: '#15803D', fontWeight: 600 }}>Individual Norm</div>
             </div>
@@ -106,7 +106,7 @@ export const ExplainabilityDrawer = ({
                 Deviation
               </div>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#D97706', marginTop: '4px' }}>
-                {caseData.deviation || '+56'}
+                {caseData.deviation || (caseData.baselineDelta ? `+${caseData.baselineDelta}` : '+56')}
               </div>
               <div style={{ fontSize: '0.72rem', color: '#D97706', fontWeight: 600 }}>Significant Shift</div>
             </div>
