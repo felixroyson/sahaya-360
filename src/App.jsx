@@ -2,6 +2,7 @@ import React from 'react';
 import { useApp } from './context/AppContext';
 import { LandingPageView } from './views/LandingPageView';
 import { ConsoleApp } from './console/ConsoleApp';
+import { GovUtilityTopBar } from './components/GovUtilityTopBar';
 import { ExplainableAIModal } from './components/ExplainableAIModal';
 import { ActionDispatchModal } from './components/ActionDispatchModal';
 import { SOSPanicOverlay } from './components/SOSPanicOverlay';
@@ -10,34 +11,29 @@ import { DiscreetCamouflageOverlay } from './components/DiscreetCamouflageOverla
 import { FloatingAIChatbot } from './components/FloatingAIChatbot';
 
 export const App = () => {
-  const { activeRole, setActiveRole, toggleDiscreetCamouflage } = useApp();
+  const { activeRole, setActiveRole, isAuthenticated, toggleDiscreetCamouflage } = useApp();
 
-  // Landing Page Mode (Kept completely untouched - Chatbot is excluded here as requested)
-  if (activeRole === 'landing') {
-    return (
-      <>
-        <LandingPageView />
-        <ExplainableAIModal />
-        <ActionDispatchModal />
-        <SOSPanicOverlay />
-        <SIHPresentationModal />
-        <DiscreetCamouflageOverlay />
-      </>
-    );
-  }
+  const isProtectedRole = activeRole !== 'landing';
+  const showLanding = !isProtectedRole || !isAuthenticated;
 
-  // Core Operational Platform: SAHAYA-360 Console & Citizen User Portal (Chatbot enabled here)
   return (
     <>
-      <ConsoleApp 
-        initialRole={activeRole} 
-        onReturnToLanding={() => setActiveRole('landing')}
-        onToggleCamouflage={toggleDiscreetCamouflage}
-      />
+      <GovUtilityTopBar />
+      {showLanding ? (
+        <LandingPageView />
+      ) : (
+        <ConsoleApp 
+          initialRole={activeRole} 
+          onReturnToLanding={() => setActiveRole('landing')}
+          onToggleCamouflage={toggleDiscreetCamouflage}
+        />
+      )}
+      <ExplainableAIModal />
+      <ActionDispatchModal />
       <SOSPanicOverlay />
       <SIHPresentationModal />
       <DiscreetCamouflageOverlay />
-      <FloatingAIChatbot />
+      {!showLanding && <FloatingAIChatbot />}
     </>
   );
 };

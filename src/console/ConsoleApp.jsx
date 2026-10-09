@@ -27,7 +27,7 @@ export const ConsoleApp = ({
   onReturnToLanding, 
   onToggleCamouflage 
 }) => {
-  const { setActiveRole: setGlobalRole, language, setLanguage } = useApp();
+  const { setActiveRole: setGlobalRole, language, setLanguage, currentUser, logout, safeNavigate } = useApp();
   const [activeRole, setActiveRole] = useState(initialRole);
   const [activeNav, setActiveNav] = useState('overview'); // 'overview' | 'triage' | 'cases' | 'check-ins' | 'interventions' | 'alerts' | 'analytics' | 'settings'
 
@@ -36,6 +36,17 @@ export const ConsoleApp = ({
       onReturnToLanding();
     }
     setGlobalRole('landing');
+  };
+
+  const handleRoleChange = (role) => {
+    if (role === 'landing') {
+      handleReturnToLanding();
+      return;
+    }
+    const success = safeNavigate(role);
+    if (success) {
+      setActiveRole(role);
+    }
   };
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -226,10 +237,12 @@ export const ConsoleApp = ({
   if (activeRole === 'victim') {
     return (
       <ProtectedCitizenPortal 
-        onReturnToConsole={(role) => setActiveRole(role || 'district')}
+        onReturnToConsole={(role) => handleRoleChange(role || 'district')}
         onReturnToLanding={onReturnToLanding}
         onToggleCamouflage={onToggleCamouflage}
-        onSwitchRole={(role) => setActiveRole(role)}
+        onSwitchRole={(role) => handleRoleChange(role)}
+        currentUser={currentUser}
+        logout={logout}
       />
     );
   }
@@ -247,7 +260,7 @@ export const ConsoleApp = ({
           setIsViewingCaseDetail(false);
         }}
         activeRole={activeRole}
-        setActiveRole={setActiveRole}
+        setActiveRole={handleRoleChange}
         unresolvedAlertsCount={unresolvedAlertsCount}
         needReviewCount={cases.filter(c => c.status.includes('REVIEW')).length}
         onReturnToLanding={handleReturnToLanding}
@@ -261,7 +274,7 @@ export const ConsoleApp = ({
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           activeRole={activeRole}
-          setActiveRole={setActiveRole}
+          setActiveRole={handleRoleChange}
           language={language}
           setLanguage={setLanguage}
           unresolvedAlertsCount={unresolvedAlertsCount}
@@ -272,6 +285,8 @@ export const ConsoleApp = ({
           onLaunchDemo={() => setIsDemoExpanded(!isDemoExpanded)}
           isDemoActive={isDemoActive}
           onReturnToLanding={handleReturnToLanding}
+          currentUser={currentUser}
+          logout={logout}
         />
 
         {/* Interactive Walkthrough Banner */}

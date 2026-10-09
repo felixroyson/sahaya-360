@@ -24,7 +24,7 @@ export const FloatingAIChatbot = () => {
     {
       id: 1,
       sender: 'bot',
-      text: 'Vanakam! I am the SAMBAL 2.0 AI Citizen & Legal Assistant powered by the Ministry of Social Justice and Empowerment. How can I help you today?',
+      text: 'Vanakam! I am the SAHAYA 2.0 AI Citizen & Legal Assistant powered by the Ministry of Social Justice and Empowerment. How can I help you today?',
       time: 'Just now',
       suggestions: [
         'How to register a rescue?',
@@ -145,7 +145,7 @@ export const FloatingAIChatbot = () => {
             zIndex: 9999,
             transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease'
           }}
-          title="Open SAMBAL 2.0 AI Assistant"
+          title="Open SAHAYA 2.0 AI Assistant"
           onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'}
           onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
         >
@@ -211,7 +211,7 @@ export const FloatingAIChatbot = () => {
               </div>
               <div>
                 <div style={{ fontWeight: 800, fontSize: '0.92rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>SAMBAL AI Assistant</span>
+                  <span>SAHAYA AI Assistant</span>
                   <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22C55E' }}></span>
                 </div>
                 <div style={{ fontSize: '0.68rem', color: '#93C5FD' }}>
@@ -359,7 +359,7 @@ export const FloatingAIChatbot = () => {
                 fontSize: '0.75rem',
                 color: '#64748B'
               }}>
-                SAMBAL AI is typing...
+                SAHAYA AI is typing...
               </div>
             )}
 

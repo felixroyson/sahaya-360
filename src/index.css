@@ -620,7 +620,7 @@ html, body {
 /* Rock-Solid Hero Layout: Fixed proportions that NEVER resize or shift on language toggle */
 .hero-two-column-layout {
   max-width: 1220px;
-  margin: 1.25rem auto 0;
+  margin: 0.5rem auto 0;
   padding: 0 1rem;
   display: flex;
   justify-content: center;
@@ -634,9 +634,13 @@ html, body {
   width: 480px;
   min-width: 480px;
   max-width: 480px;
+  min-height: 570px;
+  height: 570px;
   flex-shrink: 0;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
 }
 
 .hero-right-map-container {
@@ -648,7 +652,7 @@ html, body {
   max-height: 570px;
   position: relative;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow: visible;
   box-sizing: border-box;
 }
 
@@ -669,17 +673,17 @@ html, body {
   }
 }
 
-/* Waving Flag 3D style */
+/* Waving Flag 3D style - enlarged prominent display */
 .hero-flag-banner {
   width: 480px;
   max-width: 480px;
-  height: 250px;
-  min-height: 250px;
-  max-height: 250px;
+  height: 220px;
+  min-height: 220px;
+  max-height: 220px;
   object-fit: contain;
   flex-shrink: 0;
-  filter: drop-shadow(0 20px 32px rgba(0, 0, 0, 0.18));
-  margin-bottom: 0.85rem;
+  filter: drop-shadow(0 22px 36px rgba(0, 0, 0, 0.18));
+  margin-bottom: 0.65rem;
   animation: flagGentleFloat 4s ease-in-out infinite alternate;
 }
 
@@ -731,11 +735,12 @@ html, body {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  padding-top: 1rem;
+  padding-top: 0.75rem;
   border-top: 1px solid rgba(226, 232, 240, 0.8);
   flex-wrap: nowrap;
   width: 100%;
   box-sizing: border-box;
+  margin-top: auto;
 }
 
 .credential-item {

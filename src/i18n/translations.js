@@ -53,10 +53,10 @@ export const translations = {
     label_otp_digits: "Enter 6-Digit OTP",
 
     // Hero Section
-    hero_support_in: "Support in",
+    hero_support_in: "Statutory Equality & Support in",
     hero_india: "India.",
-    hero_headline: "Predict Distress Early. Protect Victims Safely. Ensure Statutory Justice.",
-    hero_subheadline: "Empowering frontline clinical counsellors, district vigilance officers, and magistrates to safeguard vulnerable citizens across India under MoSJE and SC/ST PoA Act 1989.",
+    hero_headline: "Predict distress early across vulnerable communities. Protect victims safely with institutional intervention. Ensure statutory justice.",
+    hero_subheadline: "Empowering frontline clinical counsellors, district vigilance officers, and magistrates to proactively safeguard vulnerable citizens across India under MoSJE and statutory mandates of the SC/ST PoA Act 1989.",
     btn_explore_triage: "Explore Triage Console",
     btn_protected_portal: "Protected Citizen Portal",
     badge_sih: "SIH 2026 PS 26094 • Ministry of Social Justice & Empowerment",
@@ -114,7 +114,7 @@ export const translations = {
     btn_save_continue: "Save and Continue",
     btn_back: "Back",
     btn_cancel: "Cancel",
-    quick_exit: "Quick Exit (Esc)",
+    quick_exit: "(Esc)",
     btn_home: "Home",
     btn_admin_login: "Admin Login",
     toll_free_title: "Toll-Free Helpline 24×7",
@@ -249,10 +249,10 @@ export const translations = {
     label_otp_digits: "6-अंकीय ओटीपी दर्ज करें",
 
     // Hero Section
-    hero_support_in: "भारत में",
-    hero_india: "सुरक्षा एवं न्याय।",
-    hero_headline: "संकट का समय रहते पूर्वानुमान। पीड़ितों की सुरक्षित सुरक्षा। वैधानिक न्याय सुनिश्चितता।",
-    hero_subheadline: "सामाजिक न्याय मंत्रालय और एससी/एसटी (अत्याचार निवारण) अधिनियम 1989 के तहत कमजोर नागरिकों की रक्षा हेतु क्लिनिकल काउंसलर्स, सतर्कता अधिकारियों और जिला मजिस्ट्रेटों का सशक्तिकरण।",
+    hero_support_in: "संपूर्ण भारत में समता, सुरक्षा एवं",
+    hero_india: "संवैधानिक न्याय।",
+    hero_headline: "मानसिक संकट का समय रहते सटीक पूर्वानुमान। पीड़ितों का त्वरित एवं सुरक्षित संस्थागत संरक्षण। वैधानिक न्याय की पूर्ण सुनिश्चितता।",
+    hero_subheadline: "केंद्रीय सामाजिक न्याय और अधिकारिता मंत्रालय एवं अनुसूचित जाति/अनुसूचित जनजाति (अत्याचार निवारण) अधिनियम 1989 के अंतर्गत, कमजोर नागरिकों की सुरक्षा हेतु क्लिनिकल काउंसलर्स, जिला सतर्कता अधिकारियों और मजिस्ट्रेटों का सशक्तिकरण।",
     btn_explore_triage: "प्रशासनिक ट्राइएज कंसोल",
     btn_protected_portal: "संरक्षित नागरिक पोर्टल",
     badge_sih: "SIH 2026 PS 26094 • सामाजिक न्याय और अधिकारिता मंत्रालय",
@@ -445,10 +445,10 @@ export const translations = {
     label_otp_digits: "६-अंकी ओटीपी टाका",
 
     // Hero Section
-    hero_support_in: "भारतात",
-    hero_india: "संरक्षण आणि न्याय.",
-    hero_headline: "तणावाचा वेळेवर अंदाज. पीडितांचे सुरक्षित संरक्षण. वैधानिक न्याय.",
-    hero_subheadline: "सामाजिक न्याय मंत्रालय व ॲट्रॉसिटी कायदा १९८९ अंतर्गत कमजोर घटकांच्या संरक्षणासाठी समुपदेशक, दक्षता अधिकारी आणि जिल्हा दंडाधिकाऱ्यांचे सक्षमीकरण.",
+    hero_support_in: "संपूर्ण भारतात समता, सुरक्षा आणि",
+    hero_india: "वैधानिक न्याय.",
+    hero_headline: "मानसिक तणावाचा वेळेवर अचूक पूर्वानुमान अंदाज. अत्याचारग्रस्त पीडितांचे सुरक्षित संस्थागत संरक्षण. कायदेशीर व वैधानिक न्यायाची शाश्वती.",
+    hero_subheadline: "केंद्रीय सामाजिक न्याय आणि सक्षमीकरण मंत्रालय तसेच अनुसूचित जाती/जमाती (अत्याचार प्रतिबंधक) कायदा १९८९ च्या अंतर्गत, पीडितांच्या सुरक्षिततेसाठी समुपदेशक, जिल्हा दक्षता अधिकारी आणि दंडाधिकाऱ्यांना सक्षम करणारी राष्ट्रीय डिजिटल प्रणाली.",
     btn_explore_triage: "प्रशासकीय ट्राइएज कन्सोल",
     btn_protected_portal: "सुरक्षित नागरिक पोर्टल",
     badge_sih: "SIH 2026 PS 26094 • सामाजिक न्याय आणि सक्षमीकरण मंत्रालय",
@@ -641,12 +641,12 @@ export const translations = {
     label_otp_digits: "6 இலக்க OTP ஐ உள்ளிடவும்",
 
     // Hero Section
-    hero_support_in: "இந்தியாவில் சமத்துவமும்",
-    hero_india: "பாதுகாப்பும்.",
+    hero_support_in: "இந்தியாவில்",
+    hero_india: "சமத்துவமும், பாதுகாப்பும், நீதியும்.",
     hero_headline: "மன உளைச்சலை முன்கூட்டியே கண்டறிதல். பாதிக்கப்பட்டோரை பாதுகாத்தல். சட்டப்பூர்வ நீதியை உறுதிசெய்தல்.",
     hero_subheadline: "மத்திய சமூக நீதி அமைச்சகம் மற்றும் வன்கொடுமை தடுப்புச் சட்டம் 1989-இன் கீழ், பாதிக்கப்பட்ட மக்களைப் பாதுகாக்க ஆலோசகர்கள், மாவட்ட கண்காணிப்பு அலுவலர்கள் மற்றும் நீதிபதிகளுக்கு அதிகாரம் அளிக்கும் தளம்.",
-    btn_explore_triage: "நிர்வாக ட்ரையேஜ் கன்சோல்",
-    btn_protected_portal: "பாதுகாக்கப்பட்ட குடிமக்கள் தளம்",
+    btn_explore_triage: "ட்ரையேஜ் கன்சோல்",
+    btn_protected_portal: "பாதுகாக்கப்பட்ட தளம்",
     badge_sih: "SIH 2026 PS 26094 • சமூக நீதி மற்றும் அதிகாரமளித்தல் அமைச்சகம்",
 
     // Credentials bar
@@ -837,11 +837,11 @@ export const translations = {
     label_otp_digits: "6-అంకెల OTP ని నమోదు చేయండి",
 
     // Hero Section
-    hero_support_in: "భారతదేశంలో",
-    hero_india: "రక్షణ మరియు న్యాయం.",
-    hero_headline: "బాధను ముందుగానే అంచనా వేయండి. బాధితులను సురక్షితంగా రక్షించండి. చట్టబద్ధమైన న్యాయాన్ని అందించండి.",
-    hero_subheadline: "సామాజిక న్యాయ మరియు సాధికారత మంత్రిత్వ శాఖ, SC/ST అత్యాచారాల నిరోధక చట్టం 1989 కింద బాధితుల రక్షణ కోసం కౌన్సిలర్లు మరియు మేజిస్ట్రేట్లకు సాధికారత కల్పించే వ్యవస్థ.",
-    btn_explore_triage: "ట్రయాజ్ కన్సోల్ పరిశీలించండి",
+    hero_support_in: "భారతదేశ వ్యాప్తంగా సమానత్వం, రక్షణ మరియు",
+    hero_india: "చట్టబద్ధమైన న్యాయం.",
+    hero_headline: "బాధితుల మానసిక బాధను ముందుగానే ఖచ్చితంగా గుర్తించండి. అత్యవసర పరిస్థితుల్లో తక్షణ సంస్థాగత రక్షణ కల్పించండి. చట్టబద్ధమైన రాజ్యాంగ న్యాయాన్ని అందించండి.",
+    hero_subheadline: "కేంద్ర సామాజిక న్యాయ మరియు సాధికారత మంత్రిత్వ శాఖ, SC/ST అత్యాచారాల నిరోధక చట్టం 1989 నిబంధనల ప్రకారం, బాధితుల రక్షణ కోసం కౌన్సిలర్లు, జిల్లా విజిలెన్స్ అధికారులు మరియు మేజిస్ట్రేట్లను సమగ్రంగా సాధికారపరిచే ఆధునిక డిజిటల్ వ్యవస్థ.",
+    btn_explore_triage: "ట్రయాజ్ కన్సోల్",
     btn_protected_portal: "రక్షిత పౌర పోర్టల్",
     badge_sih: "SIH 2026 PS 26094 • సామాజిక న్యాయం మరియు సాధికారత మంత్రిత్వ శాఖ",
 

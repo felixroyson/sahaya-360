@@ -48,11 +48,16 @@ import {
   Copy,
   Check,
   Smartphone,
-  Radio
+  Radio,
+  ShieldAlert,
+  LogOut,
+  X,
+  Building2
 } from 'lucide-react';
 import { IndiaConnectedMap } from '../components/IndiaConnectedMap';
 import { t } from '../i18n/translations';
 import { dispatchRealTimeOtp, verifyOtpCode } from '../services/otpService';
+import { getStakeholderDossier, getStakeholderLabels } from '../data/stakeholderTranslations';
 
 // Animated counter hook
 const useCountUp = (target, duration = 2000, suffix = '') => {
@@ -150,17 +155,186 @@ const ImpactStatsSection = ({ language = 'en' }) => (
   </section>
 );
 
+const STAKEHOLDER_DOSSIERS = {
+  district: {
+    id: 'district',
+    badge: 'DISTRICT VIGILANCE & MAGISTRATE DESK',
+    badgeColor: '#0284c7',
+    badgeBg: 'rgba(2, 132, 199, 0.1)',
+    name: 'District Magistrate (IAS) & Superintendent of Police (IPS)',
+    designation: 'Statutory District Vigilance Officers (DVO) & Special PoA Enforcement Command',
+    icon: '⚖️',
+    who: 'The principal executive and law enforcement authorities of the district administration. Under the SC/ST (PoA) Rules 1995/2016, the District Magistrate (Collector) and Superintendent of Police jointly head the District Vigilance & Monitoring Committee (DVMC) and supervise all Special PoA Police Units.',
+    why: 'Under the statutory provisions of the SC/ST (PoA) Act 1989, only the District Magistrate and SP possess the legal administrative authority to authorize emergency DBT compensation funds, order 24×7 armed witness protection, assign DSP-rank inquiry officers, and prevent social boycotts in vulnerable caste clusters.',
+    roles: [
+      {
+        title: 'Rule 12(4) Direct DBT Relief Clearance',
+        desc: 'Statutorily mandated to sanction and disburse 50% interim relief compensation (₹1,00,000 to ₹8,25,000) directly to survivor bank accounts within 7 days of FIR registration without awaiting trial completion.'
+      },
+      {
+        title: 'Section 15A Witness Protection Enforcement',
+        desc: 'Directs round-the-clock armed police escorts, provides safe house relocation, and conceals victim identity in judicial records to prevent local intimidation and witness hostility.'
+      },
+      {
+        title: 'Rule 7(2) 60-Day Investigation Oversight',
+        desc: 'Mandates that inquiry by a Deputy Superintendent of Police (DSP) is finalized and charge sheet filed in the Special Court within 60 days, reviewed fortnightly by the DM.'
+      },
+      {
+        title: 'Preventive Measures & Peace Bonds',
+        desc: 'Executes Section 17 & CrPC preventive security bonds in identified atrocity-prone pockets and conducts surprise night beat patrols in vulnerable settlements.'
+      }
+    ],
+    actionRole: 'district',
+    actionLabel: 'Proceed to District DM/SP Command Desk'
+  },
+  national: {
+    id: 'national',
+    badge: 'CENTRAL APEX COMMAND · GOVT OF INDIA',
+    badgeColor: '#ea580c',
+    badgeBg: 'rgba(234, 88, 12, 0.1)',
+    name: 'Ministry of Social Justice & Empowerment (MoSJE)',
+    designation: 'Central Scheduled Castes & Tribes Vigilance Grid (Govt of India)',
+    icon: '🏛️',
+    who: 'Joint Secretaries, Central Vigilance Directors, and National Nodal Officers of the Department of Social Justice & Empowerment, Government of India, operating in coordination with the National Commission for Scheduled Castes (NCSC).',
+    why: 'To maintain unified apex sovereign oversight across all 28 States and 8 Union Territories. The National Desk eliminates interstate jurisdictional bottlenecks, audits delayed investigations, releases matching Central Share DBT relief funds, and ensures compliance with Parliament mandates.',
+    roles: [
+      {
+        title: 'National Atrocity Hotspot Grid & AI Analytics',
+        desc: 'Monitors real-time spatial clustering of repeat atrocity zones, inter-district patterns, and systemic law enforcement delays across all state borders.'
+      },
+      {
+        title: 'National Helpline 14566 Oversight',
+        desc: 'Live supervisory tracking of toll-free 14566 distress calls, operator response velocity, and automated Zero-FIR electronic docket handoffs to state DMs.'
+      },
+      {
+        title: 'Central DBT Budget Allocation & Disbursal',
+        desc: 'Releases matching 50% central grants to State Governments under Centrally Sponsored Schemes, tracking direct beneficiary transfers end-to-end.'
+      },
+      {
+        title: 'Parliamentary & Statutory Annual Reporting',
+        desc: 'Compiles and presents annual statutory implementation, conviction rate, and rehabilitation audit reports to the Parliament of India under Section 21(4).'
+      }
+    ],
+    actionRole: 'national',
+    actionLabel: 'Proceed to National MoSJE Grid'
+  },
+  counsellor: {
+    id: 'counsellor',
+    badge: 'CLINICAL TELE-MENTAL HEALTH DESK',
+    badgeColor: '#16a34a',
+    badgeBg: 'rgba(22, 163, 74, 0.1)',
+    name: 'Empanelled Clinical Psychologist & Crisis Counsellor',
+    designation: 'NIMHANS-Empanelled Tele-Mental Health Specialist (MoSJE Triage)',
+    icon: '🩺',
+    who: 'Licensed clinical psychologists, psychiatric social workers, and trauma specialists empanelled under NIMHANS and the National Helpline Against Atrocities (NHAA 14566), trained in hate crime psychological trauma and caste-atrocity PTSD.',
+    why: 'Atrocity survivors frequently suffer acute psychological shock, existential dread, humiliation, and severe suicidal ideation. Without immediate trauma triage, victims face long-term trauma paralysis and often drop legal proceedings under intense local coercion. The Clinical Desk delivers immediate psychological safety, voice biomarker assessment, and healing.',
+    roles: [
+      {
+        title: 'Immediate Multilingual Crisis Intervention',
+        desc: 'Conducts immediate emotional stabilization, empathetic de-escalation, and suicide risk assessments via toll-free 14566 in the survivor’s native language.'
+      },
+      {
+        title: 'Voice Stress & Acoustic AI Biomarkers',
+        desc: 'Analyzes micro-tremors, speech pitch irregularities, and hesitation markers to objectively evaluate trauma depth without subjecting survivors to repetitive interrogation.'
+      },
+      {
+        title: 'PHQ-9 & GAD-7 Evaluation Dossiers',
+        desc: 'Generates validated psychological impact dossiers submitted to Special PoA Courts and magistrates to justify enhanced psychiatric and medical relief funds.'
+      },
+      {
+        title: 'Long-Term Community Rehabilitation',
+        desc: 'Coordinates continuous tele-counseling sessions and connects survivors with district mental health officers and local community health workers.'
+      }
+    ],
+    actionRole: 'counsellor',
+    actionLabel: 'Proceed to Clinical Counsellor Desk'
+  },
+  victim: {
+    id: 'victim',
+    badge: 'STATUTORY CITIZEN & SURVIVOR GATEWAY',
+    badgeColor: '#7c3aed',
+    badgeBg: 'rgba(124, 58, 237, 0.1)',
+    name: 'Protected Citizen & Atrocity Survivor (Citizen Portal)',
+    designation: 'Direct Beneficiary & Legal Rights Gateway (SC/ST PoA Act 1989)',
+    icon: '🛡️',
+    who: 'Vulnerable citizens, atrocity victims, their families, and frontline community rights defenders across India seeking immediate state protection, emergency rescue, or statutory economic rehabilitation.',
+    why: 'SAHAYA-360 is built around the citizen. Traditional reporting often fails due to local police resistance, fear of backlash from dominant perpetrators, and lack of information on legal rights. This portal puts statutory power into the survivor’s hands with an untamperable digital trail straight to the District Magistrate.',
+    roles: [
+      {
+        title: 'Mandatory Zero-FIR & Rapid Rescue Dispatch',
+        desc: 'Allows instant grievance and rescue filing with GPS coordinates, auto-dispatching priority dockets to the District SP and nearest police station.'
+      },
+      {
+        title: 'Milestone-by-Milestone Relief DBT Tracking',
+        desc: 'Allows victims to track their statutory compensation (₹1,00,000 to ₹8,25,000) from District Magistrate sanction to final Aadhaar DBT bank credit.'
+      },
+      {
+        title: 'Section 15A Witness Protection Requests',
+        desc: 'Enables direct one-touch applications for armed police beat patrols, safe houses, and government-funded travel allowance for attending court hearings.'
+      },
+      {
+        title: 'Discreet Camouflage & Multilingual Reporting',
+        desc: 'Features a one-click camouflage screen (weather disguise) and voice-to-text intake in Telugu, Tamil, Hindi, Marathi, and English for confidential reporting.'
+      }
+    ],
+    actionRole: 'victim',
+    actionLabel: 'Enter Protected Citizen Portal'
+  }
+};
 
 export const LandingPageView = () => {
 
-  const { setActiveRole, setSelectedCaseId, cases, nationalAggregates, language, setLanguage, openPitchDeck } = useApp();
+  const { 
+    setActiveRole, 
+    setSelectedCaseId, 
+    cases, 
+    nationalAggregates, 
+    language, 
+    setLanguage, 
+    openPitchDeck,
+    currentUser,
+    isAuthenticated,
+    login,
+    logout,
+    safeNavigate,
+    authNotice,
+    loginModalState,
+    openLoginModal,
+    closeLoginModal
+  } = useApp();
   const [activeFaq, setActiveFaq] = useState(null);
   const [selectedHub, setSelectedHub] = useState(null);
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeOfferingsTab, setActiveOfferingsTab] = useState('schemes'); // 'schemes' | 'vacancies'
-  const [selectedVacancy, setSelectedVacancy] = useState(null);
-  const [vacancyApplied, setVacancyApplied] = useState(false);
+  const [activeOfferingsTab, setActiveOfferingsTab] = useState('schemes'); // 'schemes' | 'rights'
+  const [selectedStakeholderModal, setSelectedStakeholderModal] = useState(null);
+  const [activeNavSection, setActiveNavSection] = useState('home'); // 'home' | 'about' | 'schemes' | 'faq'
+
+  useEffect(() => {
+    const handleScrollSpy = () => {
+      const scrollY = window.scrollY;
+      const aboutEl = document.getElementById('about-section');
+      const offeringsEl = document.getElementById('offerings-section');
+      const faqEl = document.getElementById('faq-section');
+
+      const aboutTop = aboutEl ? aboutEl.offsetTop - 220 : 650;
+      const offeringsTop = offeringsEl ? offeringsEl.offsetTop - 220 : 1600;
+      const faqTop = faqEl ? faqEl.offsetTop - 260 : 3800;
+
+      if (scrollY < aboutTop) {
+        setActiveNavSection('home');
+      } else if (scrollY >= aboutTop && scrollY < offeringsTop) {
+        setActiveNavSection('about');
+      } else if (scrollY >= offeringsTop && scrollY < faqTop) {
+        setActiveNavSection('schemes');
+      } else {
+        setActiveNavSection('faq');
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
+    return () => window.removeEventListener('scroll', handleScrollSpy);
+  }, [activeOfferingsTab]);
 
   // Login Panel State (Unified Login on Home Page)
   const [showLogin, setShowLogin] = useState(false);
@@ -177,6 +351,20 @@ export const LandingPageView = () => {
   const [otpError, setOtpError] = useState('');
   const [otpCountdown, setOtpCountdown] = useState(0);
   const [copiedOtp, setCopiedOtp] = useState(false);
+
+  // Synchronize login panel with global security interceptor loginModalState
+  useEffect(() => {
+    if (loginModalState?.isOpen) {
+      setShowLogin(true);
+      if (loginModalState.role) {
+        setLoginRole(loginModalState.role === 'admin' ? 'admin' : 'user');
+      }
+      if (loginModalState.designation) {
+        setAdminDesignation(loginModalState.designation);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [loginModalState]);
 
   useEffect(() => {
     if (otpCountdown > 0) {
@@ -218,6 +406,13 @@ export const LandingPageView = () => {
     }
   };
 
+  const handleCloseLogin = () => {
+    setShowLogin(false);
+    if (closeLoginModal) {
+      closeLoginModal();
+    }
+  };
+
   const handleLoginSubmit = (e) => {
     if (e) e.preventDefault();
     setOtpError('');
@@ -236,11 +431,14 @@ export const LandingPageView = () => {
         return;
       }
     }
-    if (loginRole === 'user') {
-      setActiveRole('victim');
-    } else {
-      setActiveRole(adminDesignation || 'district');
-    }
+
+    // Authenticate and issue verified session token via AppContext
+    login({
+      role: loginRole === 'user' ? 'citizen' : 'official',
+      username: loginMethod === 'otp' ? (mobileNumber ? `+91 ${mobileNumber}` : username) : username,
+      designation: loginRole === 'admin' ? adminDesignation : undefined,
+      phone: mobileNumber || (loginRole === 'user' ? '9822014566' : '9412014566')
+    });
   };
 
   const switchLoginRole = (newRole) => {
@@ -407,22 +605,60 @@ export const LandingPageView = () => {
             />
           </div>
 
-          {/* Center Nav Links */}
+          {/* Center Nav Links with Dynamic Active Indicator Dot */}
           <div className="landing-nav-links">
-            <button className="landing-nav-link active" onClick={() => {
-              setShowLogin(false);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}>{t('nav_home', language)}</button>
-            <button className="landing-nav-link" onClick={() => document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' })}>{t('nav_about', language)}</button>
-            <button className="landing-nav-link" onClick={() => {
-              setActiveOfferingsTab('schemes');
-              document.getElementById('offerings-section')?.scrollIntoView({ behavior: 'smooth' });
-            }}>{t('nav_schemes', language)}</button>
-            <button className="landing-nav-link" onClick={() => {
-              setActiveOfferingsTab('vacancies');
-              document.getElementById('offerings-section')?.scrollIntoView({ behavior: 'smooth' });
-            }}>{t('nav_vacancies', language)}</button>
-            <button className="landing-nav-link" onClick={() => document.getElementById('faq-section')?.scrollIntoView({ behavior: 'smooth' })}>{t('nav_faq', language)}</button>
+            <button
+              className={`landing-nav-link ${activeNavSection === 'home' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveNavSection('home');
+                setShowLogin(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              {t('nav_home', language)}
+            </button>
+
+            <button
+              className={`landing-nav-link ${activeNavSection === 'about' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveNavSection('about');
+                document.getElementById('about-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              {t('nav_about', language)}
+            </button>
+
+            <button
+              className={`landing-nav-link ${activeNavSection === 'schemes' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveNavSection('schemes');
+                setActiveOfferingsTab('schemes');
+                document.getElementById('offerings-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              {t('nav_schemes', language)}
+            </button>
+
+            <button
+              className={`landing-nav-link ${activeNavSection === 'vacancies' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveNavSection('vacancies');
+                setActiveOfferingsTab('vacancies');
+                document.getElementById('offerings-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              {t('nav_vacancies', language)}
+            </button>
+
+            <button
+              className={`landing-nav-link ${activeNavSection === 'faq' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveNavSection('faq');
+                document.getElementById('faq-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              {t('nav_faq', language)}
+            </button>
           </div>
 
           {/* Right Action Buttons */}
@@ -519,34 +755,86 @@ export const LandingPageView = () => {
               <span>{t('nav_helpline', language)}</span>
             </a>
 
-            {/* Single Unified Login Button */}
-            <button
-              className="pill-btn-admin-login"
-              onClick={() => {
-                setShowLogin(prev => !prev);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              style={{
-                background: showLogin ? '#0284c7' : '#0f172a',
-                color: '#ffffff',
-                border: showLogin ? '1.5px solid #0284c7' : 'none',
-                borderRadius: '9999px',
-                padding: '8px 20px',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                boxShadow: showLogin ? '0 4px 14px rgba(2, 132, 199, 0.35)' : '0 4px 14px rgba(15, 23, 42, 0.25)',
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-                whiteSpace: 'nowrap'
-              }}
-              title="Access Unified Login (Citizen Portal & Official Console)"
-            >
-              <User size={14} />
-              <span>{t('nav_login', language)}</span>
-            </button>
+            {/* Nav Auth State / Single Unified Login Button */}
+            {isAuthenticated && currentUser ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  onClick={() => safeNavigate(currentUser.role === 'citizen' ? 'victim' : (currentUser.designation || 'district'))}
+                  style={{
+                    background: '#0284c7',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '9999px',
+                    padding: '8px 18px',
+                    fontSize: '0.82rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 4px 14px rgba(2, 132, 199, 0.35)',
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                    whiteSpace: 'nowrap'
+                  }}
+                  title="Open Authenticated Dashboard"
+                >
+                  <Shield size={14} />
+                  <span>{currentUser.role === 'citizen' ? 'Citizen Portal' : 'Official Console'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={logout}
+                  style={{
+                    background: '#fee2e2',
+                    color: '#b91c1c',
+                    border: '1px solid #fecaca',
+                    borderRadius: '9999px',
+                    padding: '8px 14px',
+                    fontSize: '0.80rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    transition: 'all 0.15s ease',
+                    whiteSpace: 'nowrap'
+                  }}
+                  title="Log out of authenticated session"
+                >
+                  <LogOut size={13} />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <button
+                className="pill-btn-admin-login"
+                onClick={() => {
+                  setShowLogin(prev => !prev);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                style={{
+                  background: showLogin ? '#0284c7' : '#0f172a',
+                  color: '#ffffff',
+                  border: showLogin ? '1.5px solid #0284c7' : 'none',
+                  borderRadius: '9999px',
+                  padding: '8px 20px',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  boxShadow: showLogin ? '0 4px 14px rgba(2, 132, 199, 0.35)' : '0 4px 14px rgba(15, 23, 42, 0.25)',
+                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                  whiteSpace: 'nowrap'
+                }}
+                title="Access Unified Login (Citizen Portal & Official Console)"
+              >
+                <User size={14} />
+                <span>{t('nav_login', language)}</span>
+              </button>
+            )}
           </div>
         </nav>
       </header>
@@ -584,7 +872,7 @@ export const LandingPageView = () => {
               {/* Close / Return to overview button */}
               <button
                 type="button"
-                onClick={() => setShowLogin(false)}
+                onClick={handleCloseLogin}
                 style={{
                   background: '#f8fafc',
                   border: '1px solid #e2e8f0',
@@ -607,12 +895,35 @@ export const LandingPageView = () => {
             </div>
 
             {/* Heading matching reference image */}
-            <div style={{ marginBottom: '1.15rem' }}>
+            <div style={{ marginBottom: '0.85rem' }}>
               <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1e293b', margin: '0 0 0.25rem 0', letterSpacing: '-0.02em' }}>
                 {t('login_title', language)}
               </h2>
-              <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0 }}>              </p>
+              <p style={{ fontSize: '0.82rem', color: '#64748b', margin: 0 }}>
+                {t('login_subtitle', language)}
+              </p>
             </div>
+
+            {/* Security Notice Banner when unauthorized redirect is intercepted */}
+            {authNotice && (
+              <div style={{
+                background: '#fef2f2',
+                border: '1.5px solid #f87171',
+                borderRadius: '8px',
+                padding: '9px 12px',
+                marginBottom: '0.9rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: '#991b1b',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                lineHeight: 1.3
+              }}>
+                <ShieldAlert size={16} color="#dc2626" style={{ flexShrink: 0 }} />
+                <span>{authNotice}</span>
+              </div>
+            )}
 
             {/* Portal Role Selector (User vs Admin with Sliding Pill Transition) */}
             <div className="role-toggle-track">
@@ -1026,98 +1337,66 @@ export const LandingPageView = () => {
               className="hero-flag-banner"
             />
 
-            {/* Big Bold Headline matching screenshot */}
-            <h1 style={{ fontSize: '2.45rem', fontWeight: 800, lineHeight: 1.15, letterSpacing: '-0.025em', color: '#0f172a', marginBottom: '0.45rem', minHeight: '62px' }}>
+            {/* Big Bold Headline matching Tamil reference linespace and rhythm */}
+            <h1 style={{
+              fontSize: '2.05rem',
+              fontWeight: 800,
+              lineHeight: 1.25,
+              letterSpacing: '-0.02em',
+              color: '#0f172a',
+              marginBottom: '0.65rem'
+            }}>
               {t('hero_support_in', language)}{' '}
               <span style={{ color: '#0284c7' }}>{t('hero_india', language)}</span>
             </h1>
 
-            {/* Subheading matching screenshot styling */}
-            <p style={{ fontSize: '1.02rem', fontWeight: 700, color: '#0f172a', lineHeight: 1.35, marginBottom: '0.3rem', minHeight: '44px' }}>
+            {/* Subheading with generous line-height matching Tamil reference */}
+            <p style={{
+              fontSize: '0.96rem',
+              fontWeight: 700,
+              color: '#0f172a',
+              lineHeight: 1.48,
+              marginBottom: '0.65rem'
+            }}>
               {t('hero_headline', language)}
             </p>
-            <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.5, maxWidth: '480px', marginBottom: '1.1rem', minHeight: '62px' }}>
+
+            {/* Statutory Scope Description with comfortable reading gaps */}
+            <p style={{
+              fontSize: '0.84rem',
+              color: '#475569',
+              lineHeight: 1.62,
+              maxWidth: '480px',
+              marginBottom: '0.85rem'
+            }}>
               {t('hero_subheadline', language)}
             </p>
 
-            {/* Action Buttons - Always on the same line and positioned high up */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1.4rem', width: '100%' }}>
-              <button
-                className="pill-btn-black"
-                onClick={() => setActiveRole('district')}
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  padding: '10px 12px',
-                  fontSize: '0.80rem',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px'
-                }}
-              >
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t('btn_explore_triage', language)}</span>
-                <ArrowRight size={14} style={{ flexShrink: 0 }} />
-              </button>
-
-              <button
-                onClick={() => setActiveRole('victim')}
-                style={{
-                  flex: 1,
-                  minWidth: 0,
-                  background: '#ffffff',
-                  border: '1.5px solid #0284c7',
-                  color: '#0284c7',
-                  fontWeight: 700,
-                  borderRadius: '9999px',
-                  padding: '10px 12px',
-                  fontSize: '0.80rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  boxShadow: '0 2px 8px rgba(2, 132, 199, 0.08)',
-                  transition: 'all 0.15s ease',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}
-                title="Access Protected Citizen Well-Being Portal"
-              >
-                <Shield size={14} color="#0284c7" style={{ flexShrink: 0 }} />
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t('btn_protected_portal', language)}</span>
-              </button>
-            </div>
-
-            {/* Official Credentials Bar (Bottom Left matching screenshot) */}
-            <div className="hero-credentials-bar">
+            {/* Official Credentials Bar (Anchored at baseline matching map) */}
+            <div className="hero-credentials-bar" style={{ marginBottom: '0.25rem' }}>
               {/* Item 1: State Emblem of India */}
               <div className="credential-item">
                 <img
                   src="/ashoka_emblem.png"
                   alt="State Emblem of India"
                   style={{
-                    height: '42px',
+                    height: '36px',
                     width: 'auto',
                     objectFit: 'contain',
                     display: 'block'
                   }}
                 />
                 <div>
-                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>
                     {t('cred_ministry', language)}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#64748b' }}>
                     {t('cred_gov', language)}
                   </div>
                 </div>
               </div>
 
-              <div className="credential-divider" />
+              <div className="credential-divider" style={{ height: '30px' }} />
 
               {/* Item 2: Brand Initiative */}
               <div className="credential-item">
@@ -1125,8 +1404,8 @@ export const LandingPageView = () => {
                   src="/sahaya360_logo.png"
                   alt="SAHAYA-360 Official Emblem"
                   style={{
-                    width: '36px',
-                    height: '36px',
+                    width: '32px',
+                    height: '32px',
                     borderRadius: '50%',
                     objectFit: 'cover',
                     boxShadow: '0 2px 8px rgba(13, 148, 136, 0.25)',
@@ -1134,20 +1413,20 @@ export const LandingPageView = () => {
                   }}
                 />
                 <div>
-                  <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>
                     SAHAYA-360
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#64748b' }}>
                     Predict | Protect | Restore
                   </div>
                 </div>
               </div>
 
-              <div className="credential-divider" />
+              <div className="credential-divider" style={{ height: '30px' }} />
 
               {/* Item 3: National Helpline / Statutory Seal */}
               <div className="credential-item">
-                <svg width="36" height="36" viewBox="0 0 100 100" fill="none">
+                <svg width="32" height="32" viewBox="0 0 100 100" fill="none">
                   <circle cx="50" cy="50" r="44" stroke="#0284c7" strokeWidth="4" strokeDasharray="6 3" />
                   <circle cx="50" cy="50" r="36" stroke="#0369a1" strokeWidth="2" />
                   <circle cx="50" cy="50" r="16" fill="#0284c7" opacity="0.2" />
@@ -1157,15 +1436,17 @@ export const LandingPageView = () => {
                   <circle cx="50" cy="50" r="8" fill="#0284c7" />
                 </svg>
                 <div>
-                  <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>
                     {t('stat_helpline_seal', language)}
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#64748b' }}>
                     {t('stat_act_sec', language)}
                   </div>
                 </div>
               </div>
             </div>
+
+
 
           </div>
         )}
@@ -1327,8 +1608,9 @@ export const LandingPageView = () => {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
             <button
               className="btn btn-primary"
-              onClick={() => setActiveRole('district')}
+              onClick={() => setSelectedStakeholderModal('district')}
               style={{ padding: '12px 22px', fontSize: '0.85rem' }}
+              title="Inspect District Magistrate & SP Statutory Mandate"
             >
               <span>{t('btn_desk_dm', language)}</span>
               <ArrowRight size={15} />
@@ -1336,24 +1618,27 @@ export const LandingPageView = () => {
 
             <button
               className="btn btn-secondary"
-              onClick={() => setActiveRole('national')}
+              onClick={() => setSelectedStakeholderModal('national')}
               style={{ padding: '12px 22px', fontSize: '0.85rem' }}
+              title="Inspect MoSJE Central Apex Command Mandate"
             >
               <span>{t('btn_desk_nat', language)}</span>
             </button>
 
             <button
               className="btn btn-secondary"
-              onClick={() => setActiveRole('counsellor')}
+              onClick={() => setSelectedStakeholderModal('counsellor')}
               style={{ padding: '12px 22px', fontSize: '0.85rem' }}
+              title="Inspect Clinical Tele-Mental Health Specialist Mandate"
             >
               <span>{t('btn_desk_counsellor', language)}</span>
             </button>
 
             <button
               className="btn btn-secondary"
-              onClick={() => setActiveRole('victim')}
+              onClick={() => setSelectedStakeholderModal('victim')}
               style={{ padding: '12px 22px', fontSize: '0.85rem' }}
+              title="Inspect Citizen 14566 Survivor Rights & Gateway"
             >
               <span>{t('btn_desk_citizen', language)}</span>
             </button>
@@ -1361,14 +1646,238 @@ export const LandingPageView = () => {
         </div>
       </section>
 
+      {/* STAKEHOLDER INTELLIGENCE & STATUTORY RESPONSIBILITIES DOSSIER MODAL */}
+      {selectedStakeholderModal && (() => {
+        const d = getStakeholderDossier(selectedStakeholderModal, language);
+        const labels = getStakeholderLabels(language);
+        if (!d) return null;
+        return (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 23, 42, 0.72)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px'
+          }}>
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '24px',
+              maxWidth: '680px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              boxShadow: '0 25px 60px -15px rgba(0,0,0,0.3)',
+              border: '1px solid #e2e8f0'
+            }}>
+              {/* Header Strip */}
+              <div style={{
+                padding: '22px 26px 18px',
+                borderBottom: '1px solid #f1f5f9',
+                display: 'flex',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                background: '#fafafa',
+                borderTopLeftRadius: '24px',
+                borderTopRightRadius: '24px'
+              }}>
+                <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+                  <div style={{
+                    fontSize: '2rem',
+                    background: '#ffffff',
+                    padding: '8px 12px',
+                    borderRadius: '16px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                    border: '1px solid #e2e8f0'
+                  }}>
+                    {d.icon}
+                  </div>
+                  <div>
+                    <span style={{
+                      fontSize: '0.68rem',
+                      fontWeight: 800,
+                      color: d.badgeColor,
+                      background: d.badgeBg,
+                      padding: '3px 10px',
+                      borderRadius: '9999px',
+                      letterSpacing: '0.04em',
+                      display: 'inline-block',
+                      marginBottom: '4px'
+                    }}>
+                      {d.badge}
+                    </span>
+                    <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 2px 0', lineHeight: 1.25 }}>
+                      {d.name}
+                    </h3>
+                    <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>
+                      {d.designation}
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedStakeholderModal(null)}
+                  style={{
+                    background: '#ffffff',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '50%',
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: '#64748b'
+                  }}
+                  title={labels.close_title || "Close stakeholder dossier"}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Body Content */}
+              <div style={{ padding: '22px 26px' }}>
+                {/* 1. Who Are They */}
+                <div style={{ marginBottom: '1.15rem', background: '#f8fafc', padding: '14px 18px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontWeight: 800, color: '#0284c7', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
+                    <User size={13} />
+                    <span>{labels.lbl_who}</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.84rem', color: '#334155', lineHeight: 1.55 }}>
+                    {d.who}
+                  </p>
+                </div>
+
+                {/* 2. Why Do They Exist in SAHAYA-360 */}
+                <div style={{ marginBottom: '1.35rem', background: '#f0fdf4', padding: '14px 18px', borderRadius: '14px', border: '1px solid #bbf7d0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontWeight: 800, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '6px' }}>
+                    <Shield size={13} />
+                    <span>{labels.lbl_why}</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.84rem', color: '#166534', lineHeight: 1.55 }}>
+                    {d.why}
+                  </p>
+                </div>
+
+                {/* 3. Statutory Roles & Responsibilities under PoA Act 1989 */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', fontWeight: 800, color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '12px' }}>
+                    <Scale size={14} color="#0284c7" />
+                    <span>{labels.lbl_roles}</span>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+                    {d.roles.map((r, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          background: '#ffffff',
+                          border: '1px solid #e2e8f0',
+                          borderRadius: '12px',
+                          padding: '12px 16px',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+                          display: 'flex',
+                          gap: '12px',
+                          alignItems: 'flex-start'
+                        }}
+                      >
+                        <div style={{
+                          background: '#e0f2fe',
+                          color: '#0369a1',
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          flexShrink: 0,
+                          marginTop: '2px'
+                        }}>
+                          {i + 1}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#0f172a', marginBottom: '3px' }}>
+                            {r.title}
+                          </div>
+                          <div style={{ fontSize: '0.78rem', color: '#64748b', lineHeight: 1.5 }}>
+                            {r.desc}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Modal Footer Actions */}
+                <div style={{ display: 'flex', gap: '10px', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedStakeholderModal(null)}
+                    style={{
+                      padding: '11px 20px',
+                      borderRadius: '10px',
+                      border: '1px solid #cbd5e1',
+                      background: '#ffffff',
+                      color: '#475569',
+                      fontSize: '0.84rem',
+                      fontWeight: 700,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {labels.btn_close}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const targetRole = d.actionRole;
+                      setSelectedStakeholderModal(null);
+                      safeNavigate(targetRole);
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '11px 22px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      background: '#0f172a',
+                      color: '#ffffff',
+                      fontSize: '0.84rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      boxShadow: '0 4px 14px rgba(15, 23, 42, 0.25)'
+                    }}
+                  >
+                    <span>{d.actionLabel}</span>
+                    <ArrowRight size={15} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ============================================================ */}
-      {/* SECTION: MoSJE Official Offerings: Schemes & Vacancies       */}
+      {/* SECTION: MoSJE Official Offerings: Schemes & Statutory Rights*/}
       {/* ============================================================ */}
       <section id="offerings-section" style={{ maxWidth: '1240px', margin: '5rem auto 0', padding: '0 1.5rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(2, 132, 199, 0.1)', color: '#0284c7', padding: '4px 14px', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: 700, marginBottom: '0.85rem' }}>
             <Award size={13} />
-            <span>MINISTRY OF SOCIAL JUSTICE & EMPOWERMENT · OFFICIAL OFFERINGS</span>
+            <span>MINISTRY OF SOCIAL JUSTICE & EMPOWERMENT · OFFICIAL OFFERINGS & STATUTORY RIGHTS</span>
           </div>
 
           <h2 style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em', marginBottom: '0.75rem' }}>
@@ -1393,7 +1902,7 @@ export const LandingPageView = () => {
             </a>
           </div>
 
-          {/* Filter Tab Switcher */}
+          {/* Filter Tab Switcher: Schemes vs Statutory Citizen Rights */}
           <div style={{ display: 'inline-flex', background: '#e2e8f0', padding: '4px', borderRadius: '9999px', gap: '4px' }}>
             <button
               onClick={() => setActiveOfferingsTab('schemes')}
@@ -1417,13 +1926,13 @@ export const LandingPageView = () => {
             </button>
 
             <button
-              onClick={() => setActiveOfferingsTab('vacancies')}
+              onClick={() => setActiveOfferingsTab('rights')}
               style={{
                 padding: '9px 24px',
                 borderRadius: '9999px',
                 border: 'none',
-                background: activeOfferingsTab === 'vacancies' ? '#0f172a' : 'transparent',
-                color: activeOfferingsTab === 'vacancies' ? '#ffffff' : '#475569',
+                background: activeOfferingsTab === 'rights' ? '#0f172a' : 'transparent',
+                color: activeOfferingsTab === 'rights' ? '#ffffff' : '#475569',
                 fontWeight: 700,
                 fontSize: '0.84rem',
                 cursor: 'pointer',
@@ -1433,13 +1942,13 @@ export const LandingPageView = () => {
                 gap: '8px'
               }}
             >
-              <Briefcase size={14} />
-              <span>{t('tab_vacancies', language)} (4)</span>
+              <Scale size={14} />
+              <span>Statutory Citizen Rights & Protections (6)</span>
             </button>
           </div>
         </div>
 
-        {/* 1. SCHEMES & SERVICES GRID */}
+        {/* 1. SCHEMES & SERVICES GRID - CLICKING DIRECTLY REDIRECTS TO OFFICIAL MoSJE WEBSITE */}
         {activeOfferingsTab === 'schemes' && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
             {[
@@ -1451,9 +1960,7 @@ export const LandingPageView = () => {
                 badgeBg: 'rgba(2, 132, 199, 0.1)',
                 benefit: '₹1,00,000 to ₹8,25,000 Direct DBT',
                 desc: 'Mandated under SC/ST PoA Act 1989 Section 15A. 50% initial relief credited upon FIR, plus monthly pension, housing support, and educational allowance for affected families.',
-                portalText: 'Apply in Citizen Portal',
-                action: () => setActiveRole('victim'),
-                officialUrl: 'https://www.dosje.gov.in/organisation/national-helpline-against-atrocities/'
+                officialUrl: 'https://www.dosje.gov.in/acts-rules/'
               },
               {
                 id: 'nhaa-helpline',
@@ -1463,8 +1970,6 @@ export const LandingPageView = () => {
                 badgeBg: 'rgba(234, 88, 12, 0.1)',
                 benefit: 'Toll-Free Multilingual Emergency Triage',
                 desc: 'Zero-FIR automated docket generation, geo-tagged alert dispatch to District SP/DM, and real-time survivor tracking across all 28 States and 8 Union Territories.',
-                portalText: 'Register Rescue Report',
-                action: () => setActiveRole('victim'),
                 officialUrl: 'https://dosje.gov.in/organisation/national-helpline-against-atrocities/'
               },
               {
@@ -1475,8 +1980,6 @@ export const LandingPageView = () => {
                 badgeBg: 'rgba(22, 163, 74, 0.1)',
                 benefit: 'Adarsh Gram Infrastructure & Grants',
                 desc: 'Comprehensive community development in SC-majority villages, providing grant-in-aid for self-employment generation, skill training, and clean public asset creation.',
-                portalText: 'Explore Guidelines',
-                action: () => window.open('https://www.dosje.gov.in/organisation/pradhan-mantri-anusuchit-jaati-abhyuday-yojnapm-ajay/', '_blank'),
                 officialUrl: 'https://www.dosje.gov.in/organisation/pradhan-mantri-anusuchit-jaati-abhyuday-yojnapm-ajay/'
               },
               {
@@ -1487,8 +1990,6 @@ export const LandingPageView = () => {
                 badgeBg: 'rgba(124, 58, 237, 0.1)',
                 benefit: 'Shelter, Medical Care & Skill Reintegration',
                 desc: 'Flagship framework providing health screening, vocational training, counseling, identity documentation, and economic rehabilitation for marginalized persons.',
-                portalText: 'View Scheme Details',
-                action: () => window.open('https://dosje.gov.in/organisation/support-for-marginalized-individuals-for-livelihood-and-enterprise-smile/', '_blank'),
                 officialUrl: 'https://dosje.gov.in/organisation/support-for-marginalized-individuals-for-livelihood-and-enterprise-smile/'
               },
               {
@@ -1499,9 +2000,7 @@ export const LandingPageView = () => {
                 badgeBg: 'rgba(2, 132, 199, 0.1)',
                 benefit: '100% Tuition Fee & Academic Stipends',
                 desc: 'National scholarship framework covering higher education tuition fees and academic maintenance allowance directly via Aadhaar DBT, empowering over 60 lakh students.',
-                portalText: 'National Scholarship Portal ↗',
-                action: () => window.open('https://scholarships.gov.in', '_blank'),
-                officialUrl: 'https://www.dosje.gov.in/schemes-services/?org=mosje'
+                officialUrl: 'https://scholarships.gov.in'
               },
               {
                 id: 'ambedkar-medical',
@@ -1511,39 +2010,45 @@ export const LandingPageView = () => {
                 badgeBg: 'rgba(217, 119, 6, 0.1)',
                 benefit: 'Up to ₹5,00,000 Treatment & Legal Aid',
                 desc: 'Immediate financial aid for critical medical surgeries (cardiac, renal, cancer) and fully government-funded Special Public Prosecutors for trial defense in Special PoA Courts.',
-                portalText: 'Apply in Portal',
-                action: () => setActiveRole('victim'),
                 officialUrl: 'https://www.dosje.gov.in/organisation/dr-ambedkar-foundation'
               }
             ].map(scheme => (
               <div
                 key={scheme.id}
+                onClick={() => window.open(scheme.officialUrl, '_blank', 'noopener,noreferrer')}
                 style={{
                   background: '#ffffff',
                   borderRadius: '20px',
-                  border: '1px solid #e2e8f0',
+                  border: '1.5px solid #e2e8f0',
                   padding: '1.75rem',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  cursor: 'pointer'
                 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = '#0284c7';
+                  e.currentTarget.style.transform = 'translateY(-3px)';
+                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(2, 132, 199, 0.12)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e2e8f0';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
+                }}
+                title={`Click to open official ${scheme.title} portal on dosje.gov.in`}
               >
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
                     <span style={{ fontSize: '0.72rem', fontWeight: 700, color: scheme.badgeColor, background: scheme.badgeBg, padding: '3px 10px', borderRadius: '9999px' }}>
                       {scheme.category}
                     </span>
-                    <a
-                      href={scheme.officialUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="View on official MoSJE Portal"
-                      style={{ color: '#94a3b8' }}
-                    >
-                      <ExternalLink size={14} />
-                    </a>
+                    <span style={{ color: '#0284c7', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.72rem', fontWeight: 600 }}>
+                      <span>dosje.gov.in</span>
+                      <ExternalLink size={12} />
+                    </span>
                   </div>
 
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.45rem', lineHeight: 1.3 }}>
@@ -1559,329 +2064,188 @@ export const LandingPageView = () => {
                   </p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
+                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
                   <button
-                    onClick={scheme.action}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(scheme.officialUrl, '_blank', 'noopener,noreferrer');
+                    }}
                     style={{
-                      flex: 1,
+                      width: '100%',
                       background: '#0f172a',
                       color: '#ffffff',
-                      padding: '9px 14px',
+                      padding: '10px 14px',
                       borderRadius: '8px',
                       border: 'none',
-                      fontSize: '0.78rem',
+                      fontSize: '0.80rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '5px'
+                      gap: '6px',
+                      transition: 'background 0.15s ease'
                     }}
                   >
-                    <span>{scheme.portalText}</span>
-                    <ArrowRight size={13} />
+                    <span>Open Official Scheme Portal (dosje.gov.in)</span>
+                    <ExternalLink size={13} />
                   </button>
-
-                  <a
-                    href={scheme.officialUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      background: '#f8fafc',
-                      color: '#475569',
-                      border: '1px solid #cbd5e1',
-                      padding: '9px 12px',
-                      borderRadius: '8px',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                  >
-                    <span>Official Info</span>
-                    <ExternalLink size={12} />
-                  </a>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* 2. OPEN VACANCIES & RECRUITMENT GRID */}
-        {activeOfferingsTab === 'vacancies' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
+        {/* 2. STATUTORY CITIZEN RIGHTS & LEGAL PROTECTIONS (REPLACED VACANCIES) */}
+        {activeOfferingsTab === 'rights' && (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}>
             {[
               {
-                id: 'vac-1',
-                title: 'Clinical Tele-Counsellor (NIMHANS/MoSJE Empanelled)',
-                department: 'National Helpline Against Atrocities (NHAA - 14566)',
-                positions: '42 Open Positions Across 14 Nodal Hubs',
-                honorarium: '₹65,000 – ₹85,000 / month',
-                qualifications: 'Master’s in Clinical Psychology / Psychiatric Social Work; minimum 2 years trauma & crisis counseling experience.',
-                location: 'New Delhi / State Nodal Command Desks',
-                deadline: '31 Oct 2026'
+                id: 'right-1',
+                title: 'Section 15A: Comprehensive Victim & Witness Protection',
+                section: 'SC/ST (PoA) Act 1989 Section 15A & Rules 2016',
+                benefit: '24×7 Armed Police Escort & Relocation',
+                color: '#dc2626',
+                bg: 'rgba(220, 38, 38, 0.1)',
+                desc: 'Guarantees round-the-clock armed police protection against threats, intimidation, or violence. Mandates safe house relocation, identity concealment in court records, and state-funded daily travel and maintenance allowances for all court hearings.',
+                officialUrl: 'https://www.dosje.gov.in/acts-rules/'
               },
               {
-                id: 'vac-2',
-                title: 'District Vigilance & Human Rights Monitoring Fellow',
-                department: 'District Legal Services Authority (DLSA) & Special PoA Courts',
-                positions: '28 Open Positions in High-Volume Atrocity Districts',
-                honorarium: '₹55,000 / month + Local Travel Allowance',
-                qualifications: 'LL.B or Master’s in Human Rights / Social Justice; field experience with SC/ST PoA Act Section 15A enforcement.',
-                location: 'Maharashtra, UP, Andhra Pradesh, Bihar & Kerala Districts',
-                deadline: '25 Oct 2026'
+                id: 'right-2',
+                title: 'Rule 12(4): Immediate Direct Benefit Transfer (DBT) Relief',
+                section: 'PoA Statutory Relief Schedule (Rule 12(4))',
+                benefit: '₹1,00,000 to ₹8,25,000 Direct Bank Relief',
+                color: '#0284c7',
+                bg: 'rgba(2, 132, 199, 0.1)',
+                desc: 'Mandates 50% initial relief credited directly to the survivor’s Aadhaar-linked bank account within 7 days of FIR registration. Disbursal cannot be made conditional on police charge sheet or trial conviction outcome.',
+                officialUrl: 'https://www.dosje.gov.in/acts-rules/'
               },
               {
-                id: 'vac-3',
-                title: 'AI/ML Bias Audit & Legal NLP Specialist',
-                department: 'SAHAYA-360 Autonomous Intelligence Unit · MoSJE Tech Wing',
-                positions: '6 Open Positions (Engineering & Audit)',
-                honorarium: '₹95,000 – ₹1,25,000 / month',
-                qualifications: 'B.Tech / M.Tech in CS/AI or Computational Linguistics; experience with IndicBERT, fairness auditing, and SHAP interpretability.',
-                location: 'New Delhi (Hybrid Options Available)',
-                deadline: '05 Nov 2026'
+                id: 'right-3',
+                title: 'Rule 7(2): 60-Day Investigation & DSP Charge Sheet Mandate',
+                section: 'SC/ST (PoA) Rules 1995/2016 Rule 7(2)',
+                benefit: 'Strict 60-Day Investigation Deadline',
+                color: '#16a34a',
+                bg: 'rgba(22, 163, 74, 0.1)',
+                desc: 'Investigations must be completed by an officer not below the rank of Deputy Superintendent of Police (DSP) within 60 days. The District Magistrate and SP must review investigation progress fortnightly to prevent systemic delays.',
+                officialUrl: 'https://www.dosje.gov.in/acts-rules/'
               },
               {
-                id: 'vac-4',
-                title: 'Frontline Victim Advocate & Case Navigator',
-                department: 'State Directorate of Social Welfare & PoA Fast-Track Cells',
-                positions: '65 Open Positions (Pan-India)',
-                honorarium: '₹42,000 / month + Field Mobility Stipend',
-                qualifications: 'Bachelor’s in Social Work (BSW) / Sociology; fluency in regional state languages (Hindi, Marathi, Telugu, Tamil).',
-                location: 'District Magistrate Complex / Sub-Divisional Desks',
-                deadline: '28 Oct 2026'
+                id: 'right-4',
+                title: 'Statutory Right to Instant Zero-FIR Registration',
+                section: 'CrPC Section 154 & PoA Act Mandate',
+                benefit: 'Zero Jurisdictional Delays Across Any Police Station',
+                color: '#ea580c',
+                bg: 'rgba(234, 88, 12, 0.1)',
+                desc: 'Every police station across India is statutorily bound to register an atrocity complaint immediately as a Zero-FIR without refusing for lack of territorial jurisdiction, immediately transferring the docket to the Special PoA Court.',
+                officialUrl: 'https://dosje.gov.in/organisation/national-helpline-against-atrocities/'
+              },
+              {
+                id: 'right-5',
+                title: 'Section 15: State-Funded Senior Special Public Prosecutor',
+                section: 'SC/ST (PoA) Act Section 15 & Rule 4(5)',
+                benefit: 'Senior Legal Defense at Zero Cost to Victim',
+                color: '#7c3aed',
+                bg: 'rgba(124, 58, 237, 0.1)',
+                desc: 'Victims and their families have the statutory right to choose and engage an experienced senior advocate of at least 7 years standing as a Special Public Prosecutor, with all professional fees borne completely by the State Government.',
+                officialUrl: 'https://www.dosje.gov.in/acts-rules/'
+              },
+              {
+                id: 'right-6',
+                title: 'Rule 17: District & State Vigilance Committee Review',
+                section: 'SC/ST (PoA) Rules 1995 Rule 17 & Rule 16',
+                benefit: 'Quarterly High-Level Executive Accountability',
+                color: '#0891b2',
+                bg: 'rgba(8, 145, 178, 0.1)',
+                desc: 'The District Magistrate, Superintendent of Police, District Social Welfare Officer, and local MLAs/MPs must convene quarterly mandatory reviews to monitor case progress, witness safety, relief disbursal, and special court trials.',
+                officialUrl: 'https://www.dosje.gov.in/acts-rules/'
               }
-            ].map(job => (
+            ].map(right => (
               <div
-                key={job.id}
+                key={right.id}
+                onClick={() => window.open(right.officialUrl, '_blank', 'noopener,noreferrer')}
                 style={{
                   background: '#ffffff',
                   borderRadius: '20px',
-                  border: '1px solid #e2e8f0',
-                  padding: '2rem',
+                  border: '1.5px solid #e2e8f0',
+                  padding: '1.75rem',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)'
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+                  transition: 'all 0.2s ease',
+                  cursor: 'pointer'
                 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = right.color;
+                  e.currentTarget.style.transform = 'translateY(-3px)';
+                  e.currentTarget.style.boxShadow = `0 12px 24px ${right.bg}`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e2e8f0';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.03)';
+                }}
+                title={`Click to read statutory text under ${right.section} on dosje.gov.in`}
               >
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#16a34a', background: 'rgba(22, 163, 74, 0.1)', padding: '3px 10px', borderRadius: '9999px' }}>
-                      {job.positions}
+                    <span style={{ fontSize: '0.70rem', fontWeight: 800, color: right.color, background: right.bg, padding: '3px 10px', borderRadius: '9999px', letterSpacing: '0.02em' }}>
+                      {right.section}
                     </span>
-                    <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                      Deadline: <strong>{job.deadline}</strong>
+                    <span style={{ color: '#0284c7', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.72rem', fontWeight: 600 }}>
+                      <Scale size={12} />
+                      <span>Statutory Right</span>
                     </span>
                   </div>
 
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.35rem' }}>
-                    {job.title}
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.45rem', lineHeight: 1.3 }}>
+                    {right.title}
                   </h3>
 
-                  <div style={{ fontSize: '0.78rem', color: '#0284c7', fontWeight: 700, marginBottom: '0.85rem' }}>
-                    {job.department}
-                  </div>
-
-                  <div style={{ background: '#f8fafc', padding: '12px 14px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '1rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', marginBottom: '4px' }}>
-                      <span style={{ color: '#64748b' }}>Remuneration:</span>
-                      <strong style={{ color: '#0f172a' }}>{job.honorarium}</strong>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem' }}>
-                      <span style={{ color: '#64748b' }}>Duty Station:</span>
-                      <strong style={{ color: '#0f172a' }}>{job.location}</strong>
-                    </div>
+                  <div style={{ fontSize: '0.84rem', fontWeight: 800, color: right.color, marginBottom: '0.75rem' }}>
+                    {right.benefit}
                   </div>
 
                   <p style={{ fontSize: '0.78rem', color: '#64748b', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                    <strong>Eligibility:</strong> {job.qualifications}
+                    {right.desc}
                   </p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '10px', borderTop: '1px solid #f1f5f9', paddingTop: '1.25rem' }}>
+                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
                   <button
-                    onClick={() => {
-                      setSelectedVacancy(job);
-                      setVacancyApplied(false);
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(right.officialUrl, '_blank', 'noopener,noreferrer');
                     }}
                     style={{
-                      flex: 1,
+                      width: '100%',
                       background: '#0f172a',
                       color: '#ffffff',
-                      padding: '10px 16px',
+                      padding: '10px 14px',
                       borderRadius: '8px',
                       border: 'none',
-                      fontSize: '0.82rem',
+                      fontSize: '0.80rem',
                       fontWeight: 700,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '6px'
+                      gap: '6px',
+                      transition: 'background 0.15s ease'
                     }}
                   >
-                    <span>Apply Online</span>
-                    <ArrowRight size={14} />
+                    <span>Read Official Legal Gazette (PoA Act)</span>
+                    <ExternalLink size={13} />
                   </button>
-
-                  <a
-                    href="https://www.dosje.gov.in/vacancies/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      background: '#ffffff',
-                      color: '#475569',
-                      border: '1px solid #cbd5e1',
-                      padding: '10px 16px',
-                      borderRadius: '8px',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '5px'
-                    }}
-                  >
-                    <span>Official Gazette</span>
-                    <ExternalLink size={12} />
-                  </a>
                 </div>
               </div>
             ))}
           </div>
         )}
       </section>
-
-      {/* VACANCY APPLICATION MODAL */}
-      {selectedVacancy && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(15, 23, 42, 0.65)',
-          backdropFilter: 'blur(6px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-          padding: '20px'
-        }}>
-          <div style={{
-            background: '#ffffff',
-            borderRadius: '20px',
-            maxWidth: '540px',
-            width: '100%',
-            padding: '28px',
-            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-            maxHeight: '90vh',
-            overflowY: 'auto'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-              <div>
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0284c7', background: 'rgba(2, 132, 199, 0.1)', padding: '3px 8px', borderRadius: '4px' }}>
-                  RECRUITMENT APPLICATION
-                </span>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', marginTop: '6px', marginBottom: '2px' }}>
-                  {selectedVacancy.title}
-                </h3>
-                <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{selectedVacancy.department}</div>
-              </div>
-
-              <button
-                onClick={() => setSelectedVacancy(null)}
-                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: '#64748b' }}
-              >
-                ✕
-              </button>
-            </div>
-
-            {vacancyApplied ? (
-              <div style={{ padding: '24px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', textAlign: 'center' }}>
-                <CheckCircle2 size={40} color="#16a34a" style={{ margin: '0 auto 10px' }} />
-                <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#166534', marginBottom: '4px' }}>
-                  Application Registered Successfully!
-                </h4>
-                <p style={{ fontSize: '0.82rem', color: '#15803D', marginBottom: '14px' }}>
-                  Your candidate profile has been transmitted to the MoSJE Recruitment Directorate. An acknowledgment email has been dispatched.
-                </p>
-                <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a', background: '#fff', padding: '6px 14px', borderRadius: '6px', border: '1px solid #86efac', display: 'inline-block' }}>
-                  Application Ref: REC-2026-{Math.floor(1000 + Math.random() * 9000)}
-                </div>
-                <div style={{ marginTop: '16px' }}>
-                  <button
-                    onClick={() => setSelectedVacancy(null)}
-                    style={{ background: '#0f172a', color: '#fff', padding: '8px 20px', borderRadius: '8px', border: 'none', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                setVacancyApplied(true);
-              }}>
-                <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                    Full Name *
-                  </label>
-                  <input required type="text" placeholder="Enter your official name" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.84rem' }} />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                      Email Address *
-                    </label>
-                    <input required type="email" placeholder="name@example.com" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.84rem' }} />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                      Mobile Number *
-                    </label>
-                    <input required type="tel" maxLength={10} placeholder="10-digit number" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.84rem' }} />
-                  </div>
-                </div>
-
-                <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                    Highest Qualification & University *
-                  </label>
-                  <input required type="text" placeholder="e.g. M.Phil in Clinical Psychology (NIMHANS)" style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.84rem' }} />
-                </div>
-
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, color: '#334155', marginBottom: '4px' }}>
-                    Statement of Experience / Motivation *
-                  </label>
-                  <textarea required rows={3} placeholder="Briefly describe your relevant field or clinical experience..." style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.84rem' }} />
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedVacancy(null)}
-                    style={{ padding: '9px 18px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff', color: '#475569', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{ padding: '9px 22px', borderRadius: '8px', border: 'none', background: '#0f172a', color: '#fff', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}
-                  >
-                    Submit Application
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* ============================================================ */}
       {/* SECTION: AI/ML Tech Architecture Pipeline                    */}
@@ -2177,7 +2541,7 @@ export const LandingPageView = () => {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1.25rem' }}>
                 {[
-                  { role: 'Team Lead / Full Stack', name: 'Felix Thomas' },
+                  { role: 'Team Lead / Full Stack', name: 'Felix Royson' },
                   { role: 'ML / AI Pipeline', name: 'Distress Engine' },
                   { role: 'NLP & Bhashini', name: 'IndicBERT Pipeline' },
                   { role: 'Backend & API', name: 'FastAPI + PostgreSQL' },

@@ -6,7 +6,11 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [language, setLanguageState] = useState(() => {
     try {
-      return localStorage.getItem('sahaya_language') || 'en';
+      const stored = localStorage.getItem('sahaya_language') || localStorage.getItem('preferred_language');
+      if (stored && ['en', 'hi', 'mr', 'ta', 'te'].includes(stored)) {
+        return stored;
+      }
+      return 'en';
     } catch {
       return 'en';
     }
@@ -16,11 +20,206 @@ export const AppProvider = ({ children }) => {
     setLanguageState(langCode);
     try {
       localStorage.setItem('sahaya_language', langCode);
+      localStorage.setItem('preferred_language', langCode);
+      if (typeof document !== 'undefined') {
+        document.documentElement.lang = langCode;
+      }
     } catch {
       // Ignore storage errors in private browsing
     }
   };
-  const [activeRole, setActiveRole] = useState('landing');
+
+  // Synchronize language attribute and listen to external storage changes across tabs
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language;
+    }
+    const handleStorageChange = (e) => {
+      if ((e.key === 'sahaya_language' || e.key === 'preferred_language') && e.newValue) {
+        if (['en', 'hi', 'mr', 'ta', 'te'].includes(e.newValue)) {
+          setLanguageState(e.newValue);
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [language]);
+
+  // =========================================================================
+  // ENTERPRISE AUTHENTICATION & ROLE-BASED ACCESS CONTROL (RBAC)
+  // =========================================================================
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = sessionStorage.getItem('sahaya_auth_user') || localStorage.getItem('sahaya_auth_user');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.role && parsed.token) {
+          return parsed;
+        }
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  });
+
+  const isAuthenticated = Boolean(currentUser);
+
+  // Active Role with Authentication Guard: If not authenticated, always enforce landing!
+  const [activeRole, setActiveRoleState] = useState(() => {
+    try {
+      const storedUser = sessionStorage.getItem('sahaya_auth_user') || localStorage.getItem('sahaya_auth_user');
+      if (!storedUser) {
+        return 'landing';
+      }
+      const savedRole = localStorage.getItem('sahaya_active_role');
+      if (savedRole && ['landing', 'victim', 'counsellor', 'district', 'national'].includes(savedRole)) {
+        return savedRole;
+      }
+      return 'landing';
+    } catch {
+      return 'landing';
+    }
+  });
+
+  // Security Notice & Login Interception State
+  const [authNotice, setAuthNotice] = useState(null);
+  const [loginModalState, setLoginModalState] = useState({
+    isOpen: false,
+    role: 'user', // 'user' | 'admin'
+    designation: 'district',
+    intendedTarget: null
+  });
+
+  const openLoginModal = ({ role = 'user', designation = 'district', intendedTarget = null, notice = '' } = {}) => {
+    if (notice) {
+      setAuthNotice(notice);
+    }
+    setLoginModalState({
+      isOpen: true,
+      role,
+      designation,
+      intendedTarget
+    });
+  };
+
+  const closeLoginModal = () => {
+    setLoginModalState(prev => ({ ...prev, isOpen: false }));
+    setAuthNotice(null);
+  };
+
+  // Safe Navigation with Security Guard (Intercepts unauthorized access)
+  const safeNavigate = (targetRole, customNotice) => {
+    if (!targetRole || targetRole === 'landing') {
+      setActiveRoleState('landing');
+      try {
+        localStorage.removeItem('sahaya_active_role');
+      } catch {}
+      return true;
+    }
+
+    // Check if user is authenticated
+    if (!currentUser) {
+      // SECURITY GUARD TRIGGERED: Block access and open login modal
+      if (targetRole === 'victim') {
+        openLoginModal({
+          role: 'user',
+          intendedTarget: targetRole,
+          notice: customNotice || '🔒 Citizen Authentication Required: Please log in with your registered mobile and OTP to access the Protected Citizen Portal.'
+        });
+      } else {
+        openLoginModal({
+          role: 'admin',
+          designation: targetRole,
+          intendedTarget: targetRole,
+          notice: customNotice || '🔒 Official Clearance Required: Access to statutory command consoles is restricted to authorized Magistrates, Counsellors, and MoSJE Officers.'
+        });
+      }
+      return false;
+    }
+
+    // Role-Based Access Control (RBAC) verification
+    if (targetRole === 'victim') {
+      setActiveRoleState('victim');
+      try {
+        localStorage.setItem('sahaya_active_role', 'victim');
+      } catch {}
+      return true;
+    }
+
+    if (['district', 'counsellor', 'national'].includes(targetRole)) {
+      if (currentUser.role !== 'official') {
+        // A citizen cannot view confidential judicial magistrate records
+        openLoginModal({
+          role: 'admin',
+          designation: targetRole,
+          intendedTarget: targetRole,
+          notice: '🔒 Access Denied: Official Government Credentials required to inspect confidential District/Magistrate Command records.'
+        });
+        return false;
+      }
+      setActiveRoleState(targetRole);
+      try {
+        localStorage.setItem('sahaya_active_role', targetRole);
+      } catch {}
+      return true;
+    }
+
+    setActiveRoleState('landing');
+    return true;
+  };
+
+  // Guaranteed Security: All setActiveRole calls are guarded by safeNavigate!
+  const setActiveRole = (role) => {
+    return safeNavigate(role);
+  };
+
+  const login = ({ role, username, designation, phone }) => {
+    const isCitizen = role === 'citizen' || role === 'user';
+    const userSession = {
+      id: `USR-${Date.now()}`,
+      username: username || (isCitizen ? (phone || 'citizen_user') : 'official_user'),
+      displayName: isCitizen
+        ? (username || 'Sunita (Protected Citizen)')
+        : designation === 'counsellor'
+          ? 'Dr. Ananya Sharma (Clinical Counsellor)'
+          : designation === 'national'
+            ? 'Apex Command (MoSJE National Grid)'
+            : 'Shri Rajesh Verma, IAS (District Magistrate & DVO)',
+      role: isCitizen ? 'citizen' : 'official',
+      designation: !isCitizen ? (designation || 'district') : undefined,
+      phone: phone || (isCitizen ? '9822014566' : '9412014566'),
+      token: `AUTH-${Math.random().toString(36).substring(2, 10).toUpperCase()}-${Date.now()}`,
+      loginTime: Date.now()
+    };
+
+    setCurrentUser(userSession);
+    try {
+      sessionStorage.setItem('sahaya_auth_user', JSON.stringify(userSession));
+      localStorage.setItem('sahaya_auth_user', JSON.stringify(userSession));
+    } catch {}
+
+    const targetRole = isCitizen ? 'victim' : (designation || 'district');
+    setActiveRoleState(targetRole);
+    try {
+      localStorage.setItem('sahaya_active_role', targetRole);
+    } catch {}
+
+    setLoginModalState(prev => ({ ...prev, isOpen: false }));
+    setAuthNotice(null);
+    return userSession;
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    setActiveRoleState('landing');
+    try {
+      sessionStorage.removeItem('sahaya_auth_user');
+      localStorage.removeItem('sahaya_auth_user');
+      localStorage.removeItem('sahaya_active_role');
+    } catch {}
+    setAuthNotice(null);
+  };
   const [cases, setCases] = useState(MOCK_CASES);
   const [selectedCaseId, setSelectedCaseId] = useState(MOCK_CASES[0].id);
   const [districts, setDistricts] = useState(MOCK_DISTRICTS_DATA);
@@ -285,6 +484,17 @@ export const AppProvider = ({ children }) => {
       value={{
         activeRole,
         setActiveRole,
+        // Enterprise Authentication & RBAC
+        currentUser,
+        isAuthenticated,
+        login,
+        logout,
+        safeNavigate,
+        authNotice,
+        setAuthNotice,
+        loginModalState,
+        openLoginModal,
+        closeLoginModal,
         language,
         setLanguage,
         cases,

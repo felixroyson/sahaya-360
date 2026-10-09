@@ -7,8 +7,11 @@ import {
   ShieldAlert, 
   PlayCircle, 
   CheckCircle2,
-  Sparkles
+  Sparkles,
+  LogOut,
+  Shield
 } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 
 export const ConsoleTopBar = ({ 
   searchQuery, 
@@ -21,8 +24,13 @@ export const ConsoleTopBar = ({
   onOpenAlerts,
   onLaunchDemo,
   isDemoActive,
-  onReturnToLanding
+  onReturnToLanding,
+  currentUser,
+  logout
 }) => {
+  const appContext = useApp ? useApp() : {};
+  const user = currentUser || appContext.currentUser;
+  const handleLogout = logout || appContext.logout;
   const handleBack = () => {
     if (onReturnToLanding) {
       onReturnToLanding();
@@ -130,6 +138,59 @@ export const ConsoleTopBar = ({
           <ArrowLeft size={14} />
           <span>Home</span>
         </button>
+
+        {/* Authenticated User Credentials & Logout Button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '8px', borderLeft: '1px solid #E2E8F0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }} title={`Authenticated: ${user?.displayName || 'Authorized Official'}`}>
+            <div style={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '50%',
+              background: '#0284c7',
+              color: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '0.70rem',
+              fontWeight: 800
+            }}>
+              {user?.role === 'citizen' ? 'CP' : 'GOI'}
+            </div>
+            <div style={{ lineHeight: 1.15 }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#0F172A', maxWidth: '130px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {user?.displayName || 'Officer Session'}
+              </div>
+              <div style={{ fontSize: '0.62rem', color: '#10B981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '3px' }}>
+                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }}></span>
+                <span>Verified</span>
+              </div>
+            </div>
+          </div>
+
+          <button 
+            type="button"
+            className="console-logout-btn"
+            onClick={handleLogout}
+            title="Securely Log Out & Terminate Session"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: '#FEF2F2',
+              border: '1px solid #FECACA',
+              color: '#B91C1C',
+              padding: '5px 10px',
+              borderRadius: '6px',
+              fontSize: '0.74rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <LogOut size={12} />
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
     </header>
   );

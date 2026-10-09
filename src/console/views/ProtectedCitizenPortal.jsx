@@ -45,7 +45,8 @@ import {
   Square,
   FileCheck,
   Shield,
-  Info
+  Info,
+  LogOut
 } from 'lucide-react';
 import { dispatchRealTimeOtp, verifyOtpCode } from '../../services/otpService';
 import { useApp } from '../../context/AppContext';
@@ -55,9 +56,15 @@ export const ProtectedCitizenPortal = ({
   onReturnToConsole, 
   onReturnToLanding,
   onToggleCamouflage,
-  onSwitchRole
+  onSwitchRole,
+  currentUser,
+  logout
 }) => {
-  const { language = 'en', setLanguage } = useApp ? useApp() : { language: 'en', setLanguage: () => {} };
+  const appContext = useApp ? useApp() : {};
+  const { language = 'en', setLanguage } = appContext;
+  const activeUser = currentUser || appContext.currentUser;
+  const handleLogout = logout || appContext.logout;
+  const navigateSecure = appContext.safeNavigate;
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
   const [fontSizeScale, setFontSizeScale] = useState(1);
   const [isTopLangOpen, setIsTopLangOpen] = useState(false);
@@ -125,7 +132,7 @@ export const ProtectedCitizenPortal = ({
     carrier: 'MoSJE DLT Priority',
     phone: '9822014566',
     otpCode: '456612',
-    whatsappUrl: 'https://wa.me/919822014566?text=Your%20SAMBAL%20OTP%20is%20456612'
+    whatsappUrl: 'https://wa.me/919822014566?text=Your%20SAHAYA%20OTP%20is%20456612'
   });
 
   // Step 2: Informer / Complainant Details
@@ -362,15 +369,13 @@ export const ProtectedCitizenPortal = ({
       fontSize: `${fontSizeScale * 100}%`
     }}>
       
-      {/* 1. TOP UTILITY STRIP (Official Government of India Header matching screenshot) */}
+      {/* 1. TOP UTILITY STRIP (Handled globally by GovUtilityTopBar in App.jsx) */}
       <div style={{
+        display: 'none',
         background: '#0B1A30',
         color: '#CBD5E1',
         fontSize: '0.72rem',
         padding: '5px 28px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
         position: 'relative',
         zIndex: 500
@@ -677,6 +682,44 @@ export const ProtectedCitizenPortal = ({
             </button>
           )}
 
+          {/* Authenticated Citizen Badge */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981' }}></span>
+            <div style={{ lineHeight: 1.15 }}>
+              <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#0F172A' }}>
+                {activeUser?.displayName || 'Citizen (Protected)'}
+              </div>
+              <div style={{ fontSize: '0.62rem', color: '#64748B' }}>
+                {activeUser?.phone ? `+91 ${activeUser.phone}` : 'Verified Citizen'}
+              </div>
+            </div>
+          </div>
+
+          {/* Secure Logout Button */}
+          {handleLogout && (
+            <button
+              onClick={handleLogout}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                padding: '6px 12px',
+                borderRadius: '8px',
+                background: '#FEF2F2',
+                border: '1px solid #FECACA',
+                color: '#B91C1C',
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+              title="Securely Log Out of Citizen Portal"
+            >
+              <LogOut size={13} />
+              <span>Logout</span>
+            </button>
+          )}
+
           {/* Admin Login Dropdown Menu with 3 Admin Roles */}
           <div style={{ position: 'relative' }}>
             <button
@@ -730,8 +773,15 @@ export const ProtectedCitizenPortal = ({
                     key={item.role}
                     onClick={() => {
                       setIsAdminMenuOpen(false);
-                      if (onSwitchRole) onSwitchRole(item.role);
-                      else onReturnToConsole(item.role);
+                      if (activeUser?.role !== 'official') {
+                        // Citizen lacks official clearance -> enforce login interception
+                        if (navigateSecure) {
+                          navigateSecure(item.role, '🔒 Official Government Clearance Required: SC/ST PoA Statutory Command records are restricted to registered Magistrates and MoSJE officers.');
+                        }
+                      } else {
+                        if (onSwitchRole) onSwitchRole(item.role);
+                        else onReturnToConsole(item.role);
+                      }
                     }}
                     style={{
                       display: 'flex',
@@ -774,7 +824,7 @@ export const ProtectedCitizenPortal = ({
           flexDirection: 'column',
           flexShrink: 0
         }}>
-          {/* SAMBAL Logo Emblem with State Emblem */}
+          {/* SAHAYA Logo Emblem with State Emblem */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
